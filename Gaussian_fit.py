@@ -23,7 +23,8 @@ def Gaussian_fit(x,y):
 
     import matplotlib.pyplot as plt  #for simplicity, to not write matplotlib.pyplot
         #everytime we want to plot something
-    import scipy
+    import scipy.optimize              #to do the fit. doing only import scipy sometimes
+                                #gives an error, so have to do this
     import numpy as np          #np contain linspaces as np.linspace(a,b,N)
     ####
     
