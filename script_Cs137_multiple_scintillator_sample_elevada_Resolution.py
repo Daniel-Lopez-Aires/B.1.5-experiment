@@ -342,8 +342,9 @@ one_slash_time = [1/x for x in time]                #1/time [s-1] to compute the
 
 total_rate = np.multiply(total_counts, one_slash_time) #[s-1] total counts/total time
 
-ratio_total_counts = [total_rate[2]/total_rate[0], total_rate[2]/total_rate[1], 
-                      total_rate[1]/total_rate[2]] #LYSO/CsI, LYSO/BGO, BGO/CsI
+ratio_total_counts = [total_rate[2]/total_rate[0], 
+                      total_rate[2]/total_rate[1], 
+                      total_rate[1]/total_rate[2] ] #LYSO/CsI, LYSO/BGO, BGO/CsI
 
 #Error
 
@@ -389,6 +390,36 @@ print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_rati
 
 
 
+
+
+
+
+#%% Peka position ratio
+
+#This is basically the ratio of the position of the peak for each scintillator. We assume this is the p
+#position in the hist!!!.
+
+#we have the mean_stored of the gaussian fit, so it is asically using it  #0 csI, 1 BGO, 2 LYSO. 
+
+peak_position_ratio = np.array( [ mean_stored[1] / mean_stored[0] , 
+         mean_stored[2] / mean_stored[0], 
+         mean_stored[2] / mean_stored[1] ])
+                            #BGO/ CsI, LYSO/CsI, LYSO/BGO
+
+aux = [np.sqrt( ( delta_mean_stored[1]/ mean_stored[1] )**2 + ( delta_mean_stored[0]/ mean_stored[0] )**2 ),
+       np.sqrt( ( delta_mean_stored[2]/ mean_stored[2] )**2 + ( delta_mean_stored[0]/ mean_stored[0] )**2 ),
+       np.sqrt( ( delta_mean_stored[2]/ mean_stored[2] )**2 + ( delta_mean_stored[1]/ mean_stored[1] )**2 )
+       ]            #order of the peak position ratio
+aux = np.array(aux)
+
+delta_peak_position_ratio = peak_position_ratio * aux
+                
+                                        #since the order of the peak position ratio is not the one of
+                                        #the stored mean values, have to create the arrayof sqrt by hand
+
+print('Peak position ratio BGO/CsI: (' + str(peak_position_ratio[0]) + ' +/- ' + str(delta_peak_position_ratio[0]) )
+print('Peak position ratio LYSO/CsI: (' + str(peak_position_ratio[1]) + ' +/- ' + str(delta_peak_position_ratio[1]) )
+print('Peak position ratio LYSO/BGO: (' + str(peak_position_ratio[2]) + ' +/- ' + str(delta_peak_position_ratio[2]) )
 
 
 #%% REDO OF THE RESOLUTION CALC, BUT THIS TIME ONLY MEASURING THE PEAK.
