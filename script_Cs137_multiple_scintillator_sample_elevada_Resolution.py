@@ -32,11 +32,10 @@ from plotly import offline
 
 ######3
 
-#%% RESOLUTION
-#forthis I use the common configuration that allows to plot a common histogram for every crystal
-#similar as what is done by CAEN!!.
+#%% ###############################################################
+#########################0), Data loading #####################3
+################################################################
 
-#########################4), Data loading #####################3
 #The files to load are in txt. The best way to read is:
 
 #All with same histogram, gain, bias, threshold, but different gate to optimize 
@@ -184,7 +183,9 @@ plt.savefig('count_rate_Cs137_vs_scintillator_type.png', format='png')
 #plt.ylim(0,11000)                            #limits of y axis
 
 
-#%% ##########5) FIT #################################
+#%% #################################################################
+############################1) FIT #################################
+###########################################################
 
 #Lets do the gaussian fit to the gamma () of Cs137, to see the FWHM as a function
 #of the scintillation crystal
@@ -224,19 +225,20 @@ fit = Gaussian_fit.Gaussian_fit(ADC_channel[4923-1:5741-1],
                                    counts_stored[0][4923-1:5741-1])
 
 #Storing of the relevant data, sigma and its error
-sigma_stored = []
-mean_stored = []
-delta_mean_stored = []
-delta_sigma_stored = []
-FWHM_stored = []
-delta_FWHM_stored = []
+sigma_stored = np.array([])
+mean_stored = np.array([])
+delta_mean_stored = np.array([])
+delta_sigma_stored = np.array([])
+FWHM_stored = np.array([])
+delta_FWHM_stored = np.array([])
 
-sigma_stored.append(fit['sigma'])
-mean_stored.append(fit['mean'])
-delta_mean_stored.append(fit['\Delta(mean)'])
-delta_sigma_stored.append(fit['\Delta(sigma)'])
-FWHM_stored.append(fit['FWHM'])
-delta_FWHM_stored.append(fit['\Delta(FWHM)'])
+
+sigma_stored = np.append(sigma_stored, fit['sigma'])
+mean_stored = np.append(mean_stored, fit['mean'])
+delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
+delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
+FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
+delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
 
 #$$$$$$$$$$$$$$$$$$$ BGO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -247,14 +249,13 @@ peak_index = counts_stored[1].index(peak) #1143
 fit = Gaussian_fit.Gaussian_fit(ADC_channel[1036-1:1273-1], 
                                    counts_stored[1][1036-1:1273-1])
 
-#Storing of the relevant data, sigma and its error
 
-sigma_stored.append(fit['sigma'])
-mean_stored.append(fit['mean'])
-delta_mean_stored.append(fit['\Delta(mean)'])
-delta_sigma_stored.append(fit['\Delta(sigma)'])
-FWHM_stored.append(fit['FWHM'])
-delta_FWHM_stored.append(fit['\Delta(FWHM)'])
+sigma_stored = np.append(sigma_stored, fit['sigma'])
+mean_stored = np.append(mean_stored, fit['mean'])
+delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
+delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
+FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
+delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
 #$$$$$$$$$$$$$$$$$$$ LYSO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
@@ -264,35 +265,33 @@ delta_FWHM_stored.append(fit['\Delta(FWHM)'])
 fit = Gaussian_fit.Gaussian_fit(ADC_channel[2548-1:3191-1], 
                                    counts_stored[2][2548-1:3191-1])
 
-#Storing of the relevant data, sigma and its error
 
-sigma_stored.append(fit['sigma'])
-mean_stored.append(fit['mean'])
-delta_mean_stored.append(fit['\Delta(mean)'])
-delta_sigma_stored.append(fit['\Delta(sigma)'])
-FWHM_stored.append(fit['FWHM'])
-delta_FWHM_stored.append(fit['\Delta(FWHM)'])
+sigma_stored = np.append(sigma_stored, fit['sigma'])
+mean_stored = np.append(mean_stored, fit['mean'])
+delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
+delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
+FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
+delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
 
-#%% ############### 6) Plot of R vs Scintillator ######################
+#%% #########################################3############################
+#################### 2) Plot of R vs Scintillator #######################
+##########################################################################
 
 #resolution = FWHM/<E> , <E> the centroid of the peak.
 
-R_stored = np.multiply(FWHM_stored, [1/x for x in mean_stored])           #R
-       
-R_stored_100 = [100*x for x in R_stored]                                 #R[%]
+R_stored = FWHM_stored / mean_stored           #channel Resolution 
+R_stored_100 = 100 * R_stored                                 #R[%]
 
 #calc of delta R:
-delta_FWHM_FWHM = np.multiply(delta_FWHM_stored,[1/x for x in FWHM_stored]) 
-                                               #\Delta(FWHM)/FWHM
-delta_mean_mean = np.multiply(delta_mean_stored,[1/x for x in mean_stored]) 
-                                               #\Delta(FWHM)/FWHM
-sum__ = np.multiply(delta_FWHM_FWHM, delta_FWHM_FWHM) + np.multiply(delta_mean_mean, delta_mean_mean)
-        
-sqrt_sum = [np.sqrt(x) for x in sum__]          #sqrt of the sum of relative errors
+    
+sqrt_sum = np.sqrt( (delta_FWHM_stored / FWHM_stored)**2 + (delta_mean_stored / mean_stored)**2 ) 
+                                         #sqrt of the sum of relative errors
 
-delta_R_stored = np.multiply(R_stored, sqrt_sum)              #delta(R)
-delta_R_stored_100 = [100*x for x in delta_R_stored]              #delta_R[%]
+delta_R_stored = R_stored * sqrt_sum                                #delta(R)
+delta_R_stored_100 = 100 * delta_R_stored                           #delta_R[%]
+
+
 
 #Plot
 
@@ -314,22 +313,24 @@ plt.savefig('Resolution_vs_scintillator.png', format='png')
 #Print:
 print('FWHM CsI: ' + str(FWHM_stored[0]) + ' +/- ' + str(delta_FWHM_stored[0]))
 print('FWHM BGO: ' + str(FWHM_stored[1]) + ' +/- ' + str(delta_FWHM_stored[1]))
-print('FWHM LYSO: ' + str(FWHM_stored[2]) + ' +/- ' + str(delta_FWHM_stored[2])+"/n")
+print('FWHM LYSO: ' + str(FWHM_stored[2]) + ' +/- ' + str(delta_FWHM_stored[2])+"\n")
 
 print('<channels> CsI: ' + str(mean_stored[0]) + ' +/- ' + str(delta_mean_stored[0]))
 print('<channels> BGO: ' + str(mean_stored[1]) + ' +/- ' + str(delta_mean_stored[1]))
-print('<channels> LYSO: ' + str(mean_stored[2]) + ' +/- ' + str(delta_mean_stored[2])+"/n")
+print('<channels> LYSO: ' + str(mean_stored[2]) + ' +/- ' + str(delta_mean_stored[2])+"\n")
 
 print('R CsI: ' + str(R_stored_100[0]) + ' +/- ' + str(delta_R_stored_100[0]))
 print('R BGO: ' + str(R_stored_100[1]) + ' +/- ' + str(delta_R_stored_100[1]))
-print('R LYSO: ' + str(R_stored_100[2]) + ' +/- ' + str(delta_R_stored_100[2]))
+print('R LYSO: ' + str(R_stored_100[2]) + ' +/- ' + str(delta_R_stored_100[2]) + '\n')
 
 #Lyso 2 BGO 1
 
 
 
 
-#%% TRY
+#%%########################################################################
+####################### 3)Ratio of total count rate of the spectra#############
+######################################################################
 
 #Juanpa suggest to simply compute the ratio of the total number of counts to see
 #whether this could be similar to the light yield ratio or no. So, come on!
@@ -384,7 +385,7 @@ plt.savefig('Ratio_total_counts_vs_scintillator.png', format='png')
 
 print('Ratio LYSO/CsI: (' + str(ratio_total_counts[0]) + ' +/- ' + str(delta_ratio_total_counts[0]) )
 print('Ratio LYSO/BGO: (' + str(ratio_total_counts[1]) + ' +/- ' + str(delta_ratio_total_counts[1]) )
-print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) )
+print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) + '\n' )
 
 
 
@@ -394,7 +395,9 @@ print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_rati
 
 
 
-#%% Peka position ratio
+#%%#########################################################################
+##############################3) Peka position ratio#######################
+############################################################################
 
 #This is basically the ratio of the position of the peak for each scintillator. We assume this is the p
 #position in the hist!!!.
@@ -422,7 +425,17 @@ print('Peak position ratio LYSO/CsI: (' + str(peak_position_ratio[1]) + ' +/- ' 
 print('Peak position ratio LYSO/BGO: (' + str(peak_position_ratio[2]) + ' +/- ' + str(delta_peak_position_ratio[2]) )
 
 
-#%% REDO OF THE RESOLUTION CALC, BUT THIS TIME ONLY MEASURING THE PEAK.
+
+
+
+
+
+
+
+
+
+
+#%% RESIDUO: REDO OF THE RESOLUTION CALC, BUT THIS TIME ONLY MEASURING THE PEAK.
 
 # #since this data correspond to the photopeak only, all the variables will contain
 # #photo in the name
