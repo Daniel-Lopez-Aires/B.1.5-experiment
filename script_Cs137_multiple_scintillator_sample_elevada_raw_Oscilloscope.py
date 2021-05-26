@@ -25,6 +25,8 @@ import csv
 from plotly.graph_objs import Bar, Layout
 from plotly import offline
 from scipy import stats as stats     #to find the most commom element in a list
+
+import Read_csv_oscilloscope
 ######3
 
 #plt.close("all")
@@ -42,11 +44,12 @@ from scipy import stats as stats     #to find the most commom element in a list
 #########################1), Data loading #####################
 #############################################################
 
-#The files to load are in txt. The best way to read is:
+#The files to load are in .csv. A reader function has been created, following Manu's advice
+#to make the code as short as possible to improve the readability for error debugging, the real
+#programmer work. Bro, from 43 to 283 to from 43 to 120. Lol! (I have also removes unnecesary plots!)
 
 
-##Data of the natural signal, from the oscilloscope, in.csv. 
-
+#Variables that will store the results
 voltage_stored = np.array(np.array([]))
 time_stored = np.array([])
 
@@ -55,235 +58,81 @@ time_stored = np.array([])
 ###########RAW##################3
 ################################
 
+###LYSO
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0002_LYSO_raw_24_5_both.CSV')    
 
-#with open('TEK0001.CSV') as file_object:            #LYSO, raw
-#with open('TEK0002_LYSO_raw.CSV') as file_object:            #LYSO, raw   NEW(13/5)      
-with open('TEK0002_LYSO_raw_24_5_both.CSV') as file_object:            #LYSO, raw   24/5 
-   
-        reader = csv.reader(file_object) #reader object assoaciated with the 
-        #filerow_count = sum(1 for row in reader)            #number of rows
-        #header_row = next(reader) #next return the next line. Since we only call it
-        #once, we only get the 1st line
-        #print(header_row)
-        #n_columns = len(header_row)     #number of columns
-    
-    #Storing of the voltage and time
-        time_help = np.array([])
-        voltage_help = np.array([])
-        for row in reader:
-            voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-                            #second to last
-            time_help = np.append(time_help, float(row[-1 -2]))     #time
+#Storing of the values
+voltage_stored = np.append(voltage_stored,load[1])
+time_stored = np.append(time_stored,load[0])
+###       
+      
+###CsI
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0004_CsI_raw_24_5_both.CSV')    
 
-        #Storing of the final values
-        voltage_stored = np.append(voltage_stored,voltage_help)
-        time_stored = np.append(time_stored,time_help)
-              
-# #Plot
+#Storing of the values
+voltage_stored = np.column_stack((voltage_stored,load[1]))
+time_stored = np.column_stack((time_stored,load[0]))
+        #have to write column stack so it creates columns!
+        # voltage_stored = np.column_stack((voltage_stored, voltage_help))
+###  
 
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 *time_stored,1e3 * voltage_stored, 'bo-')    #-1 chooses last element, which is the
-        #one that have been added to the lsit the lastest ;)    
-        #widht so that each bar touches each other!
-plt.title("Raw Waveform of Cs137 with LYSO", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Raw_signal_LYSO.png', format='png')
+###BGO
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0000_BGO_raw_24_5_both.CSV')    
+
+#Storing of the values
+voltage_stored = np.column_stack((voltage_stored,load[1]))
+time_stored = np.column_stack((time_stored,load[0]))
+###          
 
 
+#################################
+###########PRE##################3
+################################
+
+###LYSO
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0003_LYSO_pre_24_5_both.CSV')    
+
+#Storing of the values
+voltage_stored = np.column_stack((voltage_stored,load[1]))
+time_stored = np.column_stack((time_stored,load[0]))
+###       
+      
+###CsI
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0005_CsI_pre_24_5_both.CSV')    
+
+#Storing of the values
+voltage_stored = np.column_stack((voltage_stored,load[1]))
+time_stored = np.column_stack((time_stored,load[0]))
+###  
+
+###BGO
+load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0001_BGO_pre_24_5_both.CSV')    
+
+#Storing of the values
+voltage_stored = np.column_stack((voltage_stored,load[1]))
+time_stored = np.column_stack((time_stored,load[0]))
+###        
 
 
-#with open('TEK0005.CSV') as file_object:            #CsI, raw
-#with open('TEK0001_CsI_raw.CSV') as file_object:            #CsI, raw   NEW(13/5)                
-with open('TEK0004_CsI_raw_24_5_both.CSV') as file_object:            #CsI, raw   24/5 
-        reader = csv.reader(file_object) 
         
-    #Storing of the voltage and time
-        time_help = np.array([])
-        voltage_help = np.array([])
-        for row in reader:
-            voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-                            #second to last
-            time_help = np.append(time_help, float(row[-1 -2]))     #time
+# # #Plot
 
-        #Storing of the final values (the first storeing is with append, the rest with column_stack
-            #in order to store them in columns!!!!!!)
-        voltage_stored = np.column_stack((voltage_stored, voltage_help))
-        time_stored = np.column_stack((time_stored, time_help))
-              
-# #Plot
+# plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+# plt.plot(1e6 *time_stored,1e3 * voltage_stored, 'bo-')    #-1 chooses last element, which is the
+#         #one that have been added to the lsit the lastest ;)    
+#         #widht so that each bar touches each other!
+# plt.title("Raw Waveform of Cs137 with LYSO", fontsize=22)           #title
+# plt.xlabel("time (us)", fontsize=14)                        #xlabel
+# plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
+# # Set size of tick labels.
+# plt.tick_params(axis='both', labelsize=14)              #size of axis
+# plt.grid(True) 
+# #plt.xlim(0,max(ADC_channel))                       #limits of x axis     
+# plt.savefig('Raw_signal_LYSO.png', format='png')
 
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 * time_stored[:,-1],1e3 * voltage_stored[:,-1], 'bo-')    #-1 chooses last element, which is the
-        #widht so that each bar touches each other!
-plt.title("Raw waveform of Cs137 with CsI", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Raw_signal_CsI.png', format='png')
-
-
-
-
-
-#with open('TEK0007.CSV') as file_object:            #BGo, raw
-#with open('TEK0000_BGO_raw.CSV') as file_object:            #BGO, raw   NEW(13/5)     
-with open('TEK0000_BGO_raw_24_5_both.CSV') as file_object:            #BGO, raw   24/5        
-        reader = csv.reader(file_object)
-
-    #Storing of the voltage and time
-        time_help = np.array([])
-        voltage_help = np.array([])
-        for row in reader:
-            voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-                            #second to last
-            time_help = np.append(time_help, float(row[-1 -2]))     #time
-
-        #Storing of the final values
-        voltage_stored = np.column_stack((voltage_stored, voltage_help))
-        time_stored = np.column_stack((time_stored, time_help))
-              
-# #Plot
-
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 * time_stored[:,-1],1e3 * voltage_stored[:,-1], 'bo-')    #-1 chooses last element, which is the
-        #widht so that each bar touches each other!
-plt.title("Raw waveform of Cs137 with BGO", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Raw_signal_BGO.png', format='png')
-
-
-#########################################################################
-########################Waves from preampl#############################
-########################################################################
-
-
-#The new data comes from split, ensuring with the threshold that the data are mostly
-#from the gamma peak.
-
-
-#with open('TEK0002.CSV') as file_object:            #LYSO, pre
-#with open('TEK0002_LYSO_pre.CSV') as file_object:           #the new data      (11_5)    
-#with open('TEK0000_LYSO_pre_20_5.CSV') as file_object:           #the new data, and good!     (20_5)     
-#with open('TEK0001_LYSO_pre_directo_24_5.CSV') as file_object:     #  no splitter (24_5)    
-with open('TEK0003_LYSO_pre_24_5_both.CSV') as file_object:     #  24_5, both signals  
-       
-    reader = csv.reader(file_object)
-    
-    #Storing of the voltage and time
-    time_help = np.array([])
-    voltage_help = np.array([])
-    for row in reader:
-        voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-        #second to last
-        time_help = np.append(time_help, float(row[-1 -2]))     #time
-
-    #Storing of the final values
-    voltage_stored = np.column_stack((voltage_stored, voltage_help))
-    time_stored = np.column_stack((time_stored, time_help))
-
-            
-# #Plot
-
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 * time_stored[:,-1],1e3 * voltage_stored[:,-1], 'bo-')    #-1 chooses last element, which is the
-        #widht so that each bar touches each other!
-plt.title("Waveform of Cs137 with LYSO", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Signal_LYSO.png', format='png')
-
-
-#with open('TEK0006.CSV') as file_object:            #Csi, pre
-#with open('TEK0001_CsI_pre.CSV') as file_object:           #the new data          
-#with open('TEK0002_CsI_pre_21_5.CSV') as file_object:           #the new data, and good!     (21_5)    
-#with open('TEK0000_CsI_pre_directo_24_5.CSV') as file_object:     #  no splitter (24_5)  
-with open('TEK0005_CsI_pre_24_5_both.CSV') as file_object:     #  24_5, both signals  
-
-        reader = csv.reader(file_object) 
-  
-    #Storing of the voltage and time
-        time_help = np.array([])
-        voltage_help = np.array([])
-        for row in reader:
-            voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-                            #second to last
-            time_help = np.append(time_help, float(row[-1 -2]))     #time
-
-        #Storing of the final values
-        voltage_stored = np.column_stack((voltage_stored, voltage_help))
-        time_stored = np.column_stack((time_stored, time_help))
-              
-# #Plot
-
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 * time_stored[:,-1],1e3 * voltage_stored[:,-1], 'bo-')    #-1 chooses last element, which is the
-        #widht so that each bar touches each other!
-plt.title("Waveform of Cs137 with CsI", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Signal_CsI.png', format='png')
-
-###########
-###########
-
-#with open('TEK0008.CSV') as file_object:            #BGo, pre
-#with open('TEK0000_BGO_pre.CSV') as file_object:           #the new data
-#with open('TEK0003_BGO_pre_21_5.CSV') as file_object:           #the new data, and good!     (21_5)    
-#with open('TEK0002_BGO_pre_directo_24_5.CSV') as file_object:     #  no splitter (24_5)  
-with open('TEK0001_BGO_pre_24_5_both.CSV') as file_object:     #  24_5, both signals  
-     
-    reader = csv.reader(file_object) 
-    
-    #Storing of the voltage and time
-    time_help = np.array([])
-    voltage_help = np.array([])
-    for row in reader:
-        voltage_help = np.append(voltage_help, float(row[-1 -1]))     #voltage; -1 = last , so -1 -1 is the
-        #second to last
-        time_help = np.append(time_help, float(row[-1 -2]))     #time
-    #Storing of the final values
-    voltage_stored = np.column_stack((voltage_stored, voltage_help))
-    time_stored = np.column_stack((time_stored, time_help))
-              
-# #Plot
-
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
-plt.plot(1e6 * time_stored[:,-1],1e3 * voltage_stored[:,-1], 'bo-')    #-1 chooses last element, which is the
-        #widht so that each bar touches each other!
-plt.title("Waveform of Cs137 with BGO", fontsize=22)           #title
-plt.xlabel("time (us)", fontsize=14)                        #xlabel
-plt.ylabel("voltage (mV)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-#plt.xlim(0,max(ADC_channel))                       #limits of x axis     
-plt.savefig('Signal_BGO.png', format='png')
 
 
 ####Plot of all the waves#######
-
-
 
 #####Raw
 
