@@ -30,7 +30,11 @@ import csv
 from plotly.graph_objs import Bar, Layout
 from plotly import offline
 
+import Read_hist_txt
+
 ######3
+
+
 
 #%% ###############################################################
 #########################0), Data loading #####################3
@@ -45,75 +49,40 @@ from plotly import offline
 #extrange results, so will now unplug it, and closing the SiPM to see if now 
 #the results are fine.
 
-total_counts = []       #variable that will contain the total counts of all the
-                        #spectras
-counts_stored = []                          #storing variable of the counts
-rate_stored = []                #storing variable of the count rate
-time = [600, 200, 200]              #[s] duration time od the measurements
-#CsI, BGO, LYSO
+counts_stored = np.array([])                          #storing variable of the counts
+rate_stored = np.array([])                          #storing variable of the count rate
+ADC_channel = np.array([])                          #to store the channels
 
-#All have the same channels, so only one variable will be saved
+time = np.array([600, 200, 200])              #[s] duration time od the measurements
 
-with open('Cs_137_1_elevacion_CsI_histo.txt') as file_object:
-            
-        lines = file_object.readlines()
-        print('the number of lines of the Cs137_CsI is',len(lines))
-        #This contains strings (have to be converted to numbers using int()
-        #and \n, so the \n (salto de linea) have to be removed
-        
-        ADC_channel = []
-        counts_help = []                    #mid variable, to be used to count
-        for i in range(len(lines)):            
-            ADC_channel.append(float(lines[i].split()[0])) #store 1st number of the
-                            #column
-            counts_help.append(float(lines[i].split()[1]))    #store 2nd number of the
-                            #column
-                            
-        total_counts.append(sum(counts_help))  #total counts of the spectra   
-        count_rate_help = [x/time[0] for x in counts_help] #count rate
-        
-        #Storing
-        counts_stored.append(counts_help)
-        rate_stored.append(count_rate_help)
 
-with open('Cs_137_1_elevacion_BGO_histo.txt') as file_object:
-            
-        lines = file_object.readlines()
-        print('the number of lines of the Cs137_BGO is',len(lines))
-        #This contains strings (have to be converted to numbers using int()
-        #and \n, so the \n (salto de linea) have to be removed
-        
-        counts_help = []
-        for i in range(len(lines)):            
-            counts_help.append(float(lines[i].split()[1]))    #store 2nd number of the
-                            #column
-       
-        total_counts.append(sum(counts_help))  #total counts of the spectra         
-        count_rate_help = [x/time[0] for x in counts_help] #count rate
-        
-        #Storing
-        counts_stored.append(counts_help)
-        rate_stored.append(count_rate_help)
 
-with open('Cs_137_1_elevacion_LYSO_histo.txt') as file_object:
-            
-        lines = file_object.readlines()
-        print('the number of lines of the Cs137_LYSO is',len(lines))
-        #This contains strings (have to be converted to numbers using int()
-        #and \n, so the \n (salto de linea) have to be removed
-        
-        counts_help = []
-        for i in range(len(lines)):            
-            counts_help.append(float(lines[i].split()[1]))    #store 2nd number of the
-                            #column
-       
-        total_counts.append(sum(counts_help))  #total counts of the spectra       
-        count_rate_help = [x/time[0] for x in counts_help] #count rate
-        
-        #Storing
-        counts_stored.append(counts_help)
-        rate_stored.append(count_rate_help)
-        
+###CsI
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_CsI_histo.txt', time[0])  
+   
+#Storing of the values
+ADC_channel = np.append(ADC_channel,load[0])
+counts_stored = np.append(counts_stored,load[1])
+rate_stored = np.append(rate_stored,load[2])
+  
+###BGO
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_BGO_histo.txt', time[1])  
+   
+#Storing of the values (the 2nd storing and more has to be columns stack!!)
+ADC_channel = np.column_stack((ADC_channel,load[0]))
+counts_stored = np.column_stack((counts_stored,load[1]))
+rate_stored = np.column_stack((rate_stored,load[2]))
+###  
+
+###LYSO
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_LYSO_histo.txt', time[2]) 
+   
+#Storing of the values
+ADC_channel = np.column_stack((ADC_channel,load[0]))
+counts_stored = np.column_stack((counts_stored,load[1]))
+rate_stored = np.column_stack((rate_stored,load[2]))
+
+####Note all have the same channels!!
 
 
 #First column of counts stored is CsI, second GBo, 3rd LYSO
@@ -122,7 +91,7 @@ with open('Cs_137_1_elevacion_LYSO_histo.txt') as file_object:
             
 #CsI
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel,counts_stored[0], width = ADC_channel[1]-ADC_channel[0])     
+plt.bar(ADC_channel[:,0],counts_stored[:,0], width = ADC_channel[1,2]-ADC_channel[0,2])     
         #widht so that each bar touches each other!
 plt.title("Spectra of Cs^{137} with CsI", fontsize=24)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
@@ -130,13 +99,13 @@ plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
-plt.xlim(0,max(ADC_channel))                       #limits of x axis
+plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
 #plt.ylim(0,11000)                            #limits of y axis
 
 
 #BGO
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel,counts_stored[1], width = ADC_channel[1]-ADC_channel[0])     
+plt.bar(ADC_channel[:,0],counts_stored[:,1], width = ADC_channel[1,2]-ADC_channel[0,2])
         #widht so that each bar touches each other!
 plt.title("Spectra of Cs^{137} with BGO", fontsize=24)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
@@ -144,14 +113,14 @@ plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
-plt.xlim(0,max(ADC_channel))                       #limits of x axis
+plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
 #plt.ylim(0,11000)                            #limits of y axis
 #plt.yscale('log')  
 
 
 #LYSO
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel,counts_stored[2], width = ADC_channel[1]-ADC_channel[0])     
+plt.bar(ADC_channel[:,0],counts_stored[:, 2], width = ADC_channel[1,2]-ADC_channel[0,2]) 
         #widht so that each bar touches each other!
 plt.title("Spectra of Cs^{137} with LYSO", fontsize=24)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
@@ -159,7 +128,7 @@ plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
-plt.xlim(0,max(ADC_channel))                       #limits of x axis
+plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
 #plt.ylim(0,)                        c    #limits of y axis
 
 
@@ -167,13 +136,13 @@ plt.xlim(0,max(ADC_channel))                       #limits of x axis
 ###Plot combined, as CAEN's
 #plotting the count rate, since the measure time is differen!!
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.plot(ADC_channel, rate_stored[0], color='black', label = 'CsI')    
-plt.plot(ADC_channel, rate_stored[1], color = 'red', label = 'BGO')
-plt.plot(ADC_channel, rate_stored[2], color = 'blue', label = 'LYSO')      
+plt.plot(ADC_channel[:,0], rate_stored[:,0], color='black', label = 'CsI')    
+plt.plot(ADC_channel[:,0], rate_stored[:,1], color = 'red', label = 'BGO')
+plt.plot(ADC_channel[:,0], rate_stored[:,2], color = 'blue', label = 'LYSO')      
 plt.legend(['CsI', 'BGO', 'LYSO'], fontsize=10) 
-plt.title("Cs137 spectra for several scintillators", fontsize=20)           #title
+plt.title("Cs137 spectra", fontsize=20)           #title
 plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Count rate [Hz]", fontsize=10)              #ylabel
+plt.ylabel("Count rate (Hz)", fontsize=10)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=10)              #size of axis
 plt.grid(True) 
@@ -203,6 +172,8 @@ def gaussian(x, a, b, c):       #Definition of the function to use to fit the da
         #BEST FRIEND
         #
 
+import Gaussian_fit    #my function that does the fit
+
 
 #$$$$$$$$$$$$$$$$$$$ CsI $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #To find the intervals, I could easily find the index of the maximum, and from
@@ -212,17 +183,37 @@ def gaussian(x, a, b, c):       #Definition of the function to use to fit the da
 #I could use here the counts, do not need to use the count rate, although it
 #should give the same result.
 
-
-peak = max(counts_stored[0])        #max value of the count rate, i.e., peak
-peak_index = counts_stored[0].index(peak)
+#TO find the peak I could easily do:
+peak = max(counts_stored[:,0])                           #max value of the count rate, i.e., peak
+peak_index = np.where(counts_stored[:,0] == peak)        #index     
 
 #But, since here the peak do not have the max value, I will have to serach it 
-#by hand :()
+#by hand by looking at the .txt file #and the plot:
+    
+index_min = 4923          #index that starts the peak (by looking the graph)
+index_max = 5741          #index that ends the peak (by looking the graph)
 
-import Gaussian_fit
 
-fit = Gaussian_fit.Gaussian_fit(ADC_channel[4923-1:5741-1], 
-                                   counts_stored[0][4923-1:5741-1])
+###Plot of the interval of the peak (indexes)
+
+counts_peak = counts_stored[index_min-1:index_max-1,0] 
+ch_peak = ADC_channel[index_min-1:index_max-1,0]
+
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.plot( ADC_channel[:,0], counts_stored[:,0], 'b.-')    
+plt.plot( ch_peak , counts_peak, 'r.-')   
+        #widht so that each bar touches each other!
+plt.title("Cs137 with CsI", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_CsI_sum.png', format='png')
+###
+
+fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
+
 
 #Storing of the relevant data, sigma and its error
 sigma_stored = np.array([])
@@ -241,13 +232,35 @@ FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
 delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
 
+
+
+
+
 #$$$$$$$$$$$$$$$$$$$ BGO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-peak = max(counts_stored[1])        #max value of the count rate, i.e., peak
-peak_index = counts_stored[1].index(peak) #1143
+index_min = 950#1036          #index that starts the peak (by looking the graph)
+index_max = 1273          #index that ends the peak (by looking the graph)
 
-fit = Gaussian_fit.Gaussian_fit(ADC_channel[1036-1:1273-1], 
-                                   counts_stored[1][1036-1:1273-1])
+
+###Plot of the interval of the peak (indexes)
+counts_peak = counts_stored[index_min-1:index_max-1,1] 
+ch_peak = ADC_channel[index_min-1:index_max-1,0]
+
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.plot( ADC_channel[:,0], counts_stored[:,1], 'b.-')      
+plt.plot( ch_peak , counts_peak, 'r.-')   
+        #widht so that each bar touches each other!
+plt.title("Cs137 with BGO", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_BGO_sum.png', format='png')
+###
+
+
+fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
 
 
 sigma_stored = np.append(sigma_stored, fit['sigma'])
@@ -257,14 +270,35 @@ delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
 FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
 delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
+
+
+
 #$$$$$$$$$$$$$$$$$$$ LYSO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 #here, again, the maximum peak is not the one of the gamma peak, so again have
 #to find the peak by hand :)
 
-fit = Gaussian_fit.Gaussian_fit(ADC_channel[2548-1:3191-1], 
-                                   counts_stored[2][2548-1:3191-1])
+index_min = 2548          #index that starts the peak (by looking the graph)
+index_max = 3191          #index that ends the peak (by looking the graph)
 
+###Plot of the interval of the peak (indexes)
+counts_peak = counts_stored[index_min-1:index_max-1,2] 
+ch_peak = ADC_channel[index_min-1:index_max-1,0]
+
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.plot( ADC_channel[:,0], counts_stored[:,2], 'b.-')     
+plt.plot( ch_peak , counts_peak, 'r.-')   
+        #widht so that each bar touches each other!
+plt.title("Cs137 with LYSO", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_LYSO_sum.png', format='png')
+###
+
+fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
 
 sigma_stored = np.append(sigma_stored, fit['sigma'])
 mean_stored = np.append(mean_stored, fit['mean'])
@@ -280,31 +314,26 @@ delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
 
 #resolution = FWHM/<E> , <E> the centroid of the peak.
 
-R_stored = FWHM_stored / mean_stored           #channel Resolution 
-R_stored_100 = 100 * R_stored                                 #R[%]
+R_stored = 100 * FWHM_stored / mean_stored           #channel Resolution [%] 
 
 #calc of delta R:
     
 sqrt_sum = np.sqrt( (delta_FWHM_stored / FWHM_stored)**2 + (delta_mean_stored / mean_stored)**2 ) 
                                          #sqrt of the sum of relative errors
 
-delta_R_stored = R_stored * sqrt_sum                                #delta(R)
-delta_R_stored_100 = 100 * delta_R_stored                           #delta_R[%]
+delta_R_stored = R_stored * sqrt_sum                                #delta(R[%])
 
 
 
 #Plot
 
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(['CsI', 'BGO', 'LYSO'], R_stored_100, yerr = delta_R_stored_100, edgecolor="black")
-plt.title("Resolution of the Cs137 peak for several scintillators", fontsize=22, wrap=True)           #title
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.bar(['CsI', 'BGO', 'LYSO'], np.absolute( R_stored), yerr = delta_R_stored, edgecolor="black")
+plt.title("Resolution of the Cs137 peak", fontsize=22, wrap=True)           #title
 plt.ylabel("R (%)", fontsize=14)              #ylabel
-# Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 plt.savefig('Resolution_vs_scintillator.png', format='png')
-
 
 
 
@@ -319,76 +348,13 @@ print('<channels> CsI: ' + str(mean_stored[0]) + ' +/- ' + str(delta_mean_stored
 print('<channels> BGO: ' + str(mean_stored[1]) + ' +/- ' + str(delta_mean_stored[1]))
 print('<channels> LYSO: ' + str(mean_stored[2]) + ' +/- ' + str(delta_mean_stored[2])+"\n")
 
-print('R CsI: ' + str(R_stored_100[0]) + ' +/- ' + str(delta_R_stored_100[0]))
-print('R BGO: ' + str(R_stored_100[1]) + ' +/- ' + str(delta_R_stored_100[1]))
-print('R LYSO: ' + str(R_stored_100[2]) + ' +/- ' + str(delta_R_stored_100[2]) + '\n')
-
-#Lyso 2 BGO 1
+print('R CsI: ' + str(R_stored[0]) + ' +/- ' + str(delta_R_stored[0]))
+print('R BGO: ' + str(R_stored[1]) + ' +/- ' + str(delta_R_stored[1]))
+print('R LYSO: ' + str(R_stored[2]) + ' +/- ' + str(delta_R_stored[2]) + '\n')
 
 
-
-
-#%%########################################################################
-####################### 3)Ratio of total count rate of the spectra#############
-######################################################################
-
-#Juanpa suggest to simply compute the ratio of the total number of counts to see
-#whether this could be similar to the light yield ratio or no. So, come on!
-#Since the time are different, I must compute the count/rate in order
-#to compare the values
-
-#0 csI, 1 BGO, 2 LYSO. 
-
-one_slash_time = [1/x for x in time]                #1/time [s-1] to compute the ratio
-
-total_rate = np.multiply(total_counts, one_slash_time) #[s-1] total counts/total time
-
-ratio_total_counts = [total_rate[2]/total_rate[0], 
-                      total_rate[2]/total_rate[1], 
-                      total_rate[1]/total_rate[2] ] #LYSO/CsI, LYSO/BGO, BGO/CsI
-
-#Error
-
-delta_total_counts = [np.sqrt(x) for x in total_counts]     #error of the total counts
-
-#asuming the time has no error, the error of the ratio of total counts is:
-
-aux = [ (np.sqrt(total_counts[2]) / total_counts[2])**2 + (np.sqrt(total_counts[0]) / total_counts[0])**2,
-       (np.sqrt(total_counts[2]) / total_counts[2])**2 + (np.sqrt(total_counts[1]) / total_counts[1])**2,
-       (np.sqrt(total_counts[1]) / total_counts[1])**2 + (np.sqrt(total_counts[2]) / total_counts[2])**2,
-       ]      #(delta(c_1)/c_1)^2 + (delta(c_2)/c_2)^2), c = total counts. SAME ORDER THAN THE RATIO!!!!
-
-aux = [np.sqrt(x) for x in aux]         #sqrt( (delta(c_1)/c_1)^2 + (delta(c_2)/c_2)^2)
-                #c = total counts
-
-delta_ratio_total_counts = np.multiply(ratio_total_counts, aux)
-    
-
-#ratio_total_counts = [total_counts[2]/total_counts[0], total_counts[2]/total_counts[1], 
-#                      total_counts[1]/total_counts[2]] #LYSO/CsI, LYSO/BGO, BGO/CsI
-
-
-
-plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.title("Light yield ratio of the spectra of  Cs137", 
-          fontsize=22, wrap=True)           #title
-plt.bar(['LYSO/CsI', 'LYSO/BGO', 'BGO/CsI'], ratio_total_counts, yerr = delta_ratio_total_counts, 
-        edgecolor="black")#, yerr = delta_light_yield)
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Light yield ratio", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.savefig('Ratio_total_counts_vs_scintillator.png', format='png')
-
-#Dude, what the actual fuck, this is sick, totally match the light yield ratio.
-
-print('Ratio LYSO/CsI: (' + str(ratio_total_counts[0]) + ' +/- ' + str(delta_ratio_total_counts[0]) )
-print('Ratio LYSO/BGO: (' + str(ratio_total_counts[1]) + ' +/- ' + str(delta_ratio_total_counts[1]) )
-print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) + '\n' )
-
-
-
+####note that due to a computer error, the sigma of the BGO is engative, which leads to negative
+#resolution. But this failure is more or less normal, forget it and move on!!
 
 
 
@@ -396,7 +362,7 @@ print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_rati
 
 
 #%%#########################################################################
-##############################3) Peka position ratio#######################
+##############################3) Peak position ratio#######################
 ############################################################################
 
 #This is basically the ratio of the position of the peak for each scintillator. We assume this is the p
@@ -423,6 +389,75 @@ delta_peak_position_ratio = peak_position_ratio * aux
 print('Peak position ratio BGO/CsI: (' + str(peak_position_ratio[0]) + ' +/- ' + str(delta_peak_position_ratio[0]) )
 print('Peak position ratio LYSO/CsI: (' + str(peak_position_ratio[1]) + ' +/- ' + str(delta_peak_position_ratio[1]) )
 print('Peak position ratio LYSO/BGO: (' + str(peak_position_ratio[2]) + ' +/- ' + str(delta_peak_position_ratio[2]) )
+
+#This results are pretty good :)))))
+
+
+
+
+
+
+
+
+#%% ########################################################################
+####################### 4)Ratio of total count rate of the spectra#############
+######################################################################
+
+#Juanpa suggest to simply compute the ratio of the total number of counts to see
+#whether this could be similar to the light yield ratio or no. So, come on!
+#Since the time are different, I must compute the count/rate in order
+#to compare the values
+
+#0 csI, 1 BGO, 2 LYSO. 
+
+counts_total = sum(counts_stored)                   #sum of the counts for each scintillator
+
+total_rate = counts_total / time                        #[s-1] total counts/total time
+
+ratio_total_counts = [total_rate[2]/total_rate[0], 
+                      total_rate[2]/total_rate[1], 
+                      total_rate[1]/total_rate[2] ] #LYSO/CsI, LYSO/BGO, BGO/CsI
+
+#Error
+
+delta_total_counts = 0#np.sqrt(counts_total)     #error of the total number of counts
+            #this error will be taugh,, and since I do not care, F it
+            
+            
+#asuming the time has no error, the error of the ratio of total counts is:
+
+aux = [ (np.sqrt(counts_total[2]) / counts_total[2])**2 + (np.sqrt(counts_total[0]) / counts_total[0])**2,
+       (np.sqrt(counts_total[2]) / counts_total[2])**2 + (np.sqrt(counts_total[1]) / counts_total[1])**2,
+       (np.sqrt(counts_total[1]) / counts_total[1])**2 + (np.sqrt(counts_total[2]) / counts_total[2])**2,
+       ]      #(delta(c_1)/c_1)^2 + (delta(c_2)/c_2)^2), c = total counts. SAME ORDER THAN THE RATIO!!!!
+
+
+delta_ratio_total_counts = ratio_total_counts * np.sqrt(aux)
+    
+
+
+
+plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
+plt.title("Total counts ratio of the Cs137 spectra", 
+          fontsize=22, wrap=True)           #title
+plt.bar(['LYSO/CsI', 'LYSO/BGO', 'BGO/CsI'], ratio_total_counts, yerr = delta_ratio_total_counts, 
+        edgecolor="black")#, yerr = delta_light_yield)
+#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.ylabel("Light yield ratio", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Ratio_total_counts_vs_scintillator.png', format='png')
+
+
+print('Ratio LYSO/CsI: (' + str(ratio_total_counts[0]) + ' +/- ' + str(delta_ratio_total_counts[0]) )
+print('Ratio LYSO/BGO: (' + str(ratio_total_counts[1]) + ' +/- ' + str(delta_ratio_total_counts[1]) )
+print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) + '\n' )
+
+
+#Strange results, but in fact we do not know if this is the light yield ratio or not xD.
+
+
 
 
 
