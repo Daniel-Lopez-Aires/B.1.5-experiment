@@ -40,8 +40,8 @@ def Gaussian_fit(x,y):
     #######1) Fit ###########
      
      #Fit function:
-    def gaussian(x, Heigh, Mean, Std_dev):
-        return Heigh * np.exp(- (x-Mean)**2 / (2 * Std_dev**2)) 
+    def gaussian(x, Heigh, Mean, Variance):
+        return Heigh * np.exp(- (x-Mean)**2 / (2 * Variance)) 
     #
     
     #Data:
@@ -63,18 +63,20 @@ def Gaussian_fit(x,y):
     
     heigh = opt_values[0]                       #heigh of the fit
     mean = opt_values[1]                        #mean value of the fit 
-    sigma = opt_values[2]                       #standard deviation of the fit
-
+    variance = opt_values[2]                       #variance of the fit
+    sigma = np.sqrt(variance) 			#std deviation of the fit
+    
     perr = np.sqrt(np.diag(cov_of_opt_val))        #standard deviation error ('el 
                                  #error de toa la via vamos')
+    
     Delta_mean = perr[1]                #error of the mean
     Delta_heigh = perr[0]               #error of the heigh
-    
+    Delta_sigma = 1 / (2 * sigma) * perr[2]              #error of the standar deviation    
   #source: 
   #https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
 
     #Now lets compute other useful parameters:                  
-    Delta_sigma = perr[2]              #error of the standar deviation
+
     FWHM = 2 * np.sqrt(2 * np.log(2)) * sigma                   #FWHM of the peak
     Delta_FWHM = 2 * np.sqrt(2 * np.log(2)) * Delta_sigma     #error of the FWHM
     #print('FWHM: ' + str(FWHM) + ' +/- ' + str(Delta_FWHM) + ' MeV')
