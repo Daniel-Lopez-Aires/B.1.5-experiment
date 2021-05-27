@@ -8,9 +8,16 @@ Created on Wed Apr 28 14:19:15 2021
 GAUSSIAN FIT
 
 This script contains a function that fit a set of data to a gaussian function,
-giving the statistical parameters and plotting the fit.
+giving the statistical parameters and plotting the fit. The gaussian function is:
+    
+    Gauss(x) = Heigh * np.exp(- (x-Mean)**2 / (2 * Std_dev**2)),
+    
+        Heigh = amplitude of the gaussian function
+        Mean = mean value of the gaussian
+        Std_dev = standard deviation of the gaussian
 
-The inputs are 1D array (numbers), x and y. 
+Inputs: 1D array (numbers), x and y. 
+
 Whatch out, because python indexes begin at 0, while normaly the indexes start at 1,
 #s that is the line in your .txt is Z, for python you should type Z-1
 
@@ -76,12 +83,13 @@ def Gaussian_fit(x,y):
 
     ########## 2)Plot of the fit################3
     plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-    plt.plot(x_data, y_data, label = 'data')        #original data
-    plt.plot(x_data, gaussian(x_data, heigh, mean, sigma), 'ro', label = 'fit')
-    plt.title('Gaussian fit of the data', fontsize=20)          #title
+    plt.plot(x_data, y_data, label = 'data')                         #original data
+    plt.plot(x_data, gaussian(x_data, heigh, mean, sigma), 'ro')           #fit
+    plt.title('Gaussian fit of the data', fontsize=20)                      #title
     #plt.xlabel("E (MeV)", fontsize=10)                                    #xlabel
     #plt.ylabel("Cuentas", fontsize=10)                                    #ylabel
-    plt.tick_params(axis='both', labelsize=10)            #size of tick labels  
+    plt.legend(['data', 'gaussian fit'], fontsize=10) 
+    plt.tick_params(axis='both', labelsize=10)                  #size of tick labels  
     plt.grid(True)                                              #show grid
     #plt.xlim(5.35,5.55)                                         #limits of x axis
     
