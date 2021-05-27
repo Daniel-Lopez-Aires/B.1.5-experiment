@@ -40,19 +40,21 @@ def Gaussian_fit(x,y):
     #######1) Fit ###########
      
      #Fit function:
-    def gaussian(x, Heigh, Mean, Variance):
-        return Heigh * np.exp(- (x-Mean)**2 / (2 * Variance)) 
-    #
+     
+    def gaussian(x, Heigh, Mean, Std_dev):
+        return Heigh * np.exp(- (x-Mean)**2 / (2 * Std_dev**2)) 
+     
     
     #Data:
     x_data = np.array(x)    
     y_data = np.array(y)
 
     #Fit:
-    initial = [max(y_data), x_data[0], (x_data[1] - x_data[0]) * 5]
+    initial = [max(y_data), x_data[0], (x_data[1] - x_data[0]) * 5 ]
                 #initial guesses for the fit. If None, this does not work, so this
                 #is very important when having an offset! Thank you 
-                #Lucas Hermann Negri (PeakUtils)
+                #Lucas Hermann Negri (PeakUtils) 	#std ved!!!!
+                
     fit = scipy.optimize.curve_fit(gaussian, x_data, y_data, initial)       #fit
 
 
@@ -63,15 +65,17 @@ def Gaussian_fit(x,y):
     
     heigh = opt_values[0]                       #heigh of the fit
     mean = opt_values[1]                        #mean value of the fit 
-    variance = opt_values[2]                       #variance of the fit
-    sigma = np.sqrt(variance) 			#std deviation of the fit
+    sigma = opt_values[2]                       #variance of the fit STD DEV!!
+    #sigma = np.sqrt(opt_values[2]) 			#std deviation of the fit if using variance as parameter
     
     perr = np.sqrt(np.diag(cov_of_opt_val))        #standard deviation error ('el 
                                  #error de toa la via vamos')
     
     Delta_mean = perr[1]                #error of the mean
     Delta_heigh = perr[0]               #error of the heigh
-    Delta_sigma = 1 / (2 * sigma) * perr[2]              #error of the standar deviation    
+    #Delta_sigma = 1 / (2 * sigma) * perr[2]              #error of the standar deviation if using variance as parameter   
+    Delta_sigma = perr[2] 					#error of the standar deviation
+  
   #source: 
   #https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
 
@@ -105,3 +109,9 @@ def Gaussian_fit(x,y):
               'sigma' : sigma, '\Delta(sigma)' : Delta_sigma, 
               'FWHM' : FWHM, '\Delta(FWHM)' : Delta_FWHM}
     return values
+    
+   #4) Comments
+   #sometimes, the std_dev returned is negative, although the fit is perfect. This is just
+   #a computer error, and sadly do not know how to avoid it. If trying to use the variance as
+   #the fitting parameter, the fit does not work, so for the moment I wont do that, simply will
+   #leave this as an open question.
