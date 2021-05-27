@@ -33,8 +33,8 @@ def Gaussian_fit(x,y):
     #######1) Fit ###########
      
      #Fit function:
-    def gaussian(x, a, b, c):
-        return a * np.exp(- (x-b)**2 / (2 * c**2)) 
+    def gaussian(x, Heigh, Mean, Std_dev):
+        return Heigh * np.exp(- (x-Mean)**2 / (2 * Std_dev**2)) 
     #
     
     #Data:
@@ -53,20 +53,21 @@ def Gaussian_fit(x,y):
     opt_values = fit[0]             #optimal values of the function to fit the data
     cov_of_opt_val = fit[1]                     #covariances of the optimal values
                     #the diagonal are the variance of the parameter to estimate.   
-    a = opt_values[0]  
-    mean = opt_values[1]
-    cc = opt_values[2]
+    
+    heigh = opt_values[0]                       #heigh of the fit
+    mean = opt_values[1]                        #mean value of the fit 
+    sigma = opt_values[2]                       #standard deviation of the fit
 
     perr = np.sqrt(np.diag(cov_of_opt_val))        #standard deviation error ('el 
                                  #error de toa la via vamos')
     Delta_mean = perr[1]                #error of the mean
+    Delta_heigh = perr[0]               #error of the heigh
     
   #source: 
   #https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
 
-    #Now lets compute other useful parameters:
-    sigma = cc/np.sqrt(2)                   #standard deviation of the fit
-    Delta_sigma = perr[2]/np.sqrt(2)            #error of the standar deviation
+    #Now lets compute other useful parameters:                  
+    Delta_sigma = perr[2]              #error of the standar deviation
     FWHM = 2 * np.sqrt(2 * np.log(2)) * sigma                   #FWHM of the peak
     Delta_FWHM = 2 * np.sqrt(2 * np.log(2)) * Delta_sigma     #error of the FWHM
     #print('FWHM: ' + str(FWHM) + ' +/- ' + str(Delta_FWHM) + ' MeV')
@@ -76,7 +77,7 @@ def Gaussian_fit(x,y):
     ########## 2)Plot of the fit################3
     plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
     plt.plot(x_data, y_data, label = 'data')        #original data
-    plt.plot(x_data, gaussian(x_data, a, mean, cc), 'ro', label = 'fit')
+    plt.plot(x_data, gaussian(x_data, heigh, mean, sigma), 'ro', label = 'fit')
     plt.title('Gaussian fit of the data', fontsize=20)          #title
     #plt.xlabel("E (MeV)", fontsize=10)                                    #xlabel
     #plt.ylabel("Cuentas", fontsize=10)                                    #ylabel
@@ -89,7 +90,8 @@ def Gaussian_fit(x,y):
    #3) Return of values########################
    #the values will be returned in a dictionary indicating what is each
    #value
-    values = {'mean' : mean, '\Delta(mean)' : Delta_mean,  
+    values = {'heigh' : heigh, '\Delta(heigh)' : Delta_heigh, 
+              'mean' : mean, '\Delta(mean)' : Delta_mean,  
               'sigma' : sigma, '\Delta(sigma)' : Delta_sigma, 
               'FWHM' : FWHM, '\Delta(FWHM)' : Delta_FWHM}
     return values
