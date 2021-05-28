@@ -190,10 +190,6 @@ plt.savefig('Signals.png', format='png')
 
 
 
-
-
-
-
 #%% ###############################################################################
 ########################### Rise and decay time#####################################
 ###################################################################################
@@ -326,17 +322,20 @@ delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
     #t rise: 132 ns, error 1/5 100ns 
 
     
-    
-    
-    
 ####Plot
+
+#have to reorder the data so that they are arranged from lowest to highers: LYSO-->BGO-->CsI
+#the current order (storing order) is LYSO-->CsI-->BGO. I must not change the storing order since
+#it would affect everyhing, so I will alter the plot order!!
 
 #RAW
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
 plt.suptitle("Rise and decay time of the raw signal of the Cs137 waveform", fontsize=22, wrap=True)           #title
-plt.bar(['LYSO', 'CsI', 'BGO'], t_rise_st[0:3]*1e-3, yerr = delta_t_rise_st[0:3]*1e-3, edgecolor="black")
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[0], t_rise_st[2], t_rise_st[1] ])*1e-3, 
+        yerr = np.array([delta_t_rise_st[0], delta_t_rise_st[2], delta_t_rise_st[1] ])*1e-3, 
+        edgecolor="black")
 #plt.xlabel("ADC channels", fontsize=10)                        #xlabel
 plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
@@ -344,7 +343,9 @@ plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 
 plt.subplot(1, 2, 2)
-plt.bar(['LYSO', 'CsI', 'BGO'], t_decay_st[0:3]*1e-3, yerr = delta_t_decay_st[0:3]*1e-3)
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[0], t_decay_st[2], t_decay_st[1] ])*1e-3, 
+        yerr = np.array([delta_t_decay_st[0], delta_t_decay_st[2], delta_t_decay_st[1] ])*1e-3, 
+        edgecolor="black")
 #plt.xlabel("ADC channels", fontsize=10)                        #xlabel
 plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
@@ -364,8 +365,10 @@ print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e-3) + ' +/- ' + str(delta
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the signal of the Cs137 waveform", fontsize=22, wrap=True)           #title
-plt.bar(['LYSO', 'CsI', 'BGO'], t_rise_st[3:6]*1e-3, yerr = delta_t_rise_st[3:6]*1e-3, edgecolor="black")
+plt.suptitle("Rise and decay time of the signal of the Cs137 waveform", fontsize=22, wrap=True)    #title
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[3], t_rise_st[5], t_rise_st[4] ])*1e-3, 
+        yerr = np.array([delta_t_rise_st[3], delta_t_rise_st[5], delta_t_rise_st[4] ])*1e-3, 
+        edgecolor="black")
 #plt.xlabel("ADC channels", fontsize=10)                        #xlabel
 plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
@@ -373,7 +376,9 @@ plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 
 plt.subplot(1, 2, 2)
-plt.bar(['LYSO', 'CsI', 'BGO'], t_decay_st[3:6]*1e-3, yerr = delta_t_decay_st[3:6]*1e-3)
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[3], t_decay_st[5], t_decay_st[4] ])*1e-3, 
+        yerr = np.array([delta_t_decay_st[3], delta_t_decay_st[5], delta_t_decay_st[4] ])*1e-3, 
+        edgecolor="black")
 #plt.xlabel("ADC channels", fontsize=10)                        #xlabel
 plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
@@ -434,6 +439,12 @@ print('Decay time ratio of pre LYSO/BGO: (' + str(ratio_decay[4]) + ' +/- ' + st
 #the last stored (6 total stored), so from 3 to 5 (0 the first). LYSO, CsI, BGO the order
 #Note we are not sure about the light yield concept, but computing the amplitude will be good.
 
+#I have also implemented the integral of the curve. I will use trapz,which is the easiest way
+
+     # numpy.trapz(y, x, dx=1.0, axis=-1)[source]
+
+     #    Integrate along the given axis using the composite trapezoidal rule.
+     #    Integrate y (x) along given axis.
 
 ####################################LYSO##########################3
 
@@ -471,13 +482,25 @@ baseline = stats.mode(voltage_stored[:,3])[0]       #[V] baseline voltage, the m
                     #[0]contains the value, [1] the frequency
                     
 delta_V = 1/5 *1#100e-3           #[V] error of the voltage measurements, from the scale of
-                            #the oscilloscope, which come from the photos (pre)
+                            #the oscilloscope, which come from the photos (pre) (.csv)
+ 
+delta_t = 1/5 * 250e-9                              #[s] error of the times in the .csv, 
+                                            #from the oscilloscope
+
         
 sum_voltage = sum(-voltage_peak + baseline)         #[V] total voltage of the peak, corrected with
                         #the baseline, so that this is the real voltage created!! Baseline-voltage because
                         #voltage of the amplitude is the greatest
 
-#Storing of the current
+integral = np.trapz(voltage_peak, time_peak)        #[V*t] area under the peak
+delta_integral = 2 * np.sqrt( delta_V / (max(voltage_peak) - min(voltage_peak) ) 
+                             + delta_t/ (max(time_peak) - min(time_peak) ) )    #overstimation of the
+                #error of the integral. This is the error of the 
+                #area of the rectangle (Vmax-Vmin)*(tmax-tmin)
+
+
+
+#Storing
 
 voltage_peak_st = np.array(np.array([]))                #storage of the total voltage of the peak,
                     #removing the baseline!!!!!!
@@ -487,7 +510,11 @@ peak_st = np.array([])                  #storage of the peak value, for the max 
 n_elements_peak_st = np.array([])                        #this will store the number of voltages I sum,
                                             #for each peak, for the error calc
 delta_single_V_measurement = np.array([])         #storage of the error of the voltage 
-                    #measurements, for the error calc
+                                                #measurements, for the error calc
+                                                
+integral_st = np.array([])                      #peak integral
+delta_integral_st = np.array([])                #error of the peak integral (overstimation)
+
 #len_baseline_signal_points_stored = np.array([])                    
                     
 
@@ -496,6 +523,8 @@ baseline_st = np.append(baseline_st,baseline)
 peak_st = np.append(peak_st,peak)
 n_elements_peak_st = np.append(n_elements_peak_st,len_peak)
 delta_single_V_measurement = np.append(delta_single_V_measurement,delta_V)
+integral_st = np.append(integral_st, integral)
+delta_integral_st = np.append(delta_integral_st, delta_integral)
 
 #len_baseline_signal_points_stored.append(len_baseline_signal_points)
 
@@ -539,17 +568,24 @@ baseline = stats.mode(voltage_stored[0:index_min-1,4])[0]       #[V] baseline vo
     #common value should be until the peak appears
 
 delta_V = 1/5 *500e-3#20e-3                        #[V] 
+delta_t = 1/5 * 500e-9                             #[s] error of the times in the .csv, 
+                                        #from the oscilloscope
 
 sum_voltage = sum(-voltage_peak + baseline)         #[V] total voltage of the peak, corrected with
                         #the baseline, so that this is the real voltage created!!
+integral = np.trapz(voltage_peak, time_peak)        #[V*t] area under the peak
+delta_integral = 2 * np.sqrt( delta_V / (max(voltage_peak) - min(voltage_peak) ) 
+                             + delta_t/ (max(time_peak) - min(time_peak) ) )    
 
-#Storing of the current
+#Storing
 
 voltage_peak_st = np.append(voltage_peak_st,sum_voltage)
 baseline_st = np.append(baseline_st,baseline)
 peak_st = np.append(peak_st,peak)
 n_elements_peak_st = np.append(n_elements_peak_st,len_peak)
 delta_single_V_measurement = np.append(delta_single_V_measurement,delta_V)
+integral_st = np.append(integral_st, integral)
+delta_integral_st = np.append(delta_integral_st, delta_integral)
 
 
 #Plot (debug)
@@ -586,9 +622,13 @@ len_peak =  len(voltage_stored[:,5][index_min-1:index_max-1])           #len of 
 baseline = stats.mode(voltage_stored[0:index_min-1,5])[0]       #[V] baseline voltage, the most common value
 
 delta_V = 1/5 *200e-3#10e-3                                     #[V] 
+delta_t = 1/5 *500e-9                                                #[s]
 
 sum_voltage = sum(-voltage_peak + baseline)          #[V] total voltage of the peak, corrected with
                         #the baseline, so that this is the real voltage created!!
+integral = np.trapz(voltage_peak, time_peak)        #[V*t] area under the peak      
+delta_integral = 2 * np.sqrt( delta_V / (max(voltage_peak) - min(voltage_peak) ) 
+                             + delta_t/ (max(time_peak) - min(time_peak) ) )   
 
 #Storing of the current
 
@@ -597,6 +637,8 @@ baseline_st = np.append(baseline_st,baseline)
 peak_st = np.append(peak_st,peak)
 n_elements_peak_st = np.append(n_elements_peak_st,len_peak)
 delta_single_V_measurement = np.append(delta_single_V_measurement,delta_V)
+integral_st = np.append(integral_st, integral)
+delta_integral_st = np.append(delta_integral_st, delta_integral)
 
 
 #Plot (debug)
@@ -639,6 +681,11 @@ print('Amplitude (Vmax) LYSO (V) = ' + str(max_voltage_signals[0]) + ' +- ' + st
 print('Amplitude (Vmax) BGO (V) = ' + str(max_voltage_signals[2]) + ' +- ' + str(delta_max_voltage[2]))
 print('Amplitude (Vmax) CsI (V) =' + str(max_voltage_signals[1]) + ' +- ' + str(delta_max_voltage[1]) +'\n')
 
+print('Integral LYSO (baseline removed) (V*s) = ' + str(integral_st[0]) + ' +- ' + str(delta_integral_st[0]) )
+print('Integral BGO (baseline removed) (V*s) =' + str(integral_st[2]) + ' +- ' + str(delta_integral_st[2]) )
+print('Integral CsI (baseline removed) (V*s) =' + str(integral_st[1]) + ' +- ' + str(delta_integral_st[1]) + '\n')
+
+
 #And the ratio of the maximum voltage:
     #BGO/ CsI & LYSO/CsI & LYSO/BGO
 
@@ -672,14 +719,30 @@ delta_ratio_total_ampl = ratio_total_ampl * np.sqrt( np.array(
     [(delta_voltage_peak_st[2]/voltage_peak_st[2])**2 + (delta_voltage_peak_st[1]/voltage_peak_st[1])**2,
      (delta_voltage_peak_st[0]/voltage_peak_st[0])**2 + (delta_voltage_peak_st[1]/voltage_peak_st[1])**2,
      (delta_voltage_peak_st[0]/voltage_peak_st[0])**2 + (delta_voltage_peak_st[2]/voltage_peak_st[2])**2,
-             ]
-    )
-    )   #computing the error. The sqrt of the quotient have to be computed by hand :))
+             ] ) )   #computing the error. The sqrt of the quotient have to be computed by hand :))
 
 
 print('Total amplitude ratio BGO/CsI = ' + str(ratio_total_ampl[0]) + ' +- ' + str(delta_ratio_total_ampl[0]))
 print('Total amplitude ratio LYSO/CsI =' + str(ratio_total_ampl[1]) + ' +- ' + str(delta_ratio_total_ampl[1]))
 print('Total amplitude ratio LYSO/BGO = ' + str(ratio_total_ampl[2]) + ' +- ' + str(delta_ratio_total_ampl[2]) +'\n')
+
+#Integral ratio
+
+ratio_int = np.array([integral_st[2] / integral_st[1], 
+                      integral_st[0] / integral_st[1],
+                     integral_st[0] / integral_st[2]
+                      ])
+
+delta_ratio_int = ratio_total_ampl * np.sqrt( np.array(
+    [(delta_integral_st[2]/integral_st[2])**2 + (delta_integral_st[1]/integral_st[1])**2,
+     (delta_integral_st[0]/integral_st[0])**2 + (delta_integral_st[1]/integral_st[1])**2,
+     (delta_integral_st[0]/integral_st[0])**2 + (delta_integral_st[2]/integral_st[2])**2,
+             ] ) )   #computing the error. The sqrt of the quotient have to be computed by hand :))
+
+print('Integral (no baseline) ratio BGO/CsI = ' + str(ratio_int[0]) + ' +- ' + str(delta_ratio_int[0]) )
+print('Integral (no baseline) ratio  LYSO/CsI =' + str(ratio_int[1]) + ' +- ' + str(delta_ratio_int[1]) )
+print('Integral (no baseline) ratio  LYSO/BGO = ' + str(ratio_int[2]) + ' +- ' + str(delta_ratio_int[2]) +'\n')
+
 
 
 
