@@ -21,17 +21,19 @@ The sample is elevated, 1 cylinder only (plus the little ring placed just above 
 import matplotlib.pyplot as plt  #for simplicity, to not write matplotlib.pyplot
         #everytime we want to plot something
 
-import math 
 #from scipy.stats import norm               ##norm.fit() fit to gaussian
 import numpy as np
     #np contain linspaces as np.linspace(a,b,N)
-import csv
         
 from plotly.graph_objs import Bar, Layout
 from plotly import offline
 
-import Read_hist_txt
+import sys                   #to import functions from other folders!!
+sys.path.insert(0, '/home/dla/Python/Functions_homemade')   #path where I have the functions
 
+
+import Read_hist_txt
+import Gaussian_fit
 ######3
 
 
@@ -54,19 +56,20 @@ rate_stored = np.array([])                          #storing variable of the cou
 ADC_channel = np.array([])                          #to store the channels
 
 time = np.array([600, 200, 200])              #[s] duration time od the measurements
-
+                #600, 200, 200
 
 
 ###CsI
-load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_CsI_histo.txt', time[0])  
-   
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs137_CsI_histo_5_26.txt', time[0])  
+                               
 #Storing of the values
 ADC_channel = np.append(ADC_channel,load[0])
 counts_stored = np.append(counts_stored,load[1])
 rate_stored = np.append(rate_stored,load[2])
   
 ###BGO
-load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_BGO_histo.txt', time[1])  
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs137_BGO_5_26_histo.txt', time[1])  
+#load = Read_hist_txt.Read_hist_txt_CAEN('Cs137_BGO_31_5_9000_600s_histo.txt', time[1])  
    
 #Storing of the values (the 2nd storing and more has to be columns stack!!)
 ADC_channel = np.column_stack((ADC_channel,load[0]))
@@ -75,7 +78,8 @@ rate_stored = np.column_stack((rate_stored,load[2]))
 ###  
 
 ###LYSO
-load = Read_hist_txt.Read_hist_txt_CAEN('Cs_137_1_elevacion_LYSO_histo.txt', time[2]) 
+load = Read_hist_txt.Read_hist_txt_CAEN('Cs137_LYSO_5_26_histo.txt', time[2]) 
+#load = Read_hist_txt.Read_hist_txt_CAEN('Cs137_LYSO_31_5_9000_600s_histo.txt', time[2]) 
    
 #Storing of the values
 ADC_channel = np.column_stack((ADC_channel,load[0]))
@@ -89,47 +93,47 @@ rate_stored = np.column_stack((rate_stored,load[2]))
 
 #    0.1. Representacion
             
-#CsI
-plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel[:,0],counts_stored[:,0], width = ADC_channel[1,2]-ADC_channel[0,2])     
-        #widht so that each bar touches each other!
-plt.title("Spectra of Cs^{137} with CsI", fontsize=24)           #title
-plt.xlabel("ADC channels", fontsize=14)                        #xlabel
-plt.ylabel("Counts", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
-#plt.ylim(0,11000)                            #limits of y axis
+# #CsI
+# plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
+# plt.bar(ADC_channel[:,0],counts_stored[:,0], width = ADC_channel[1,2]-ADC_channel[0,2])     
+#         #widht so that each bar touches each other!
+# plt.title("Spectra of Cs^{137} with CsI", fontsize=24)           #title
+# plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+# plt.ylabel("Counts", fontsize=14)              #ylabel
+# # Set size of tick labels.
+# plt.tick_params(axis='both', labelsize=14)              #size of axis
+# plt.grid(True) 
+# plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
+# #plt.ylim(0,11000)                            #limits of y axis
 
 
-#BGO
-plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel[:,0],counts_stored[:,1], width = ADC_channel[1,2]-ADC_channel[0,2])
-        #widht so that each bar touches each other!
-plt.title("Spectra of Cs^{137} with BGO", fontsize=24)           #title
-plt.xlabel("ADC channels", fontsize=14)                        #xlabel
-plt.ylabel("Counts", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
-#plt.ylim(0,11000)                            #limits of y axis
-#plt.yscale('log')  
+# #BGO
+# plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
+# plt.bar(ADC_channel[:,0],counts_stored[:,1], width = ADC_channel[1,2]-ADC_channel[0,2])
+#         #widht so that each bar touches each other!
+# plt.title("Spectra of Cs^{137} with BGO", fontsize=24)           #title
+# plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+# plt.ylabel("Counts", fontsize=14)              #ylabel
+# # Set size of tick labels.
+# plt.tick_params(axis='both', labelsize=14)              #size of axis
+# plt.grid(True) 
+# plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
+# #plt.ylim(0,11000)                            #limits of y axis
+# #plt.yscale('log')  
 
 
-#LYSO
-plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(ADC_channel[:,0],counts_stored[:, 2], width = ADC_channel[1,2]-ADC_channel[0,2]) 
-        #widht so that each bar touches each other!
-plt.title("Spectra of Cs^{137} with LYSO", fontsize=24)           #title
-plt.xlabel("ADC channels", fontsize=14)                        #xlabel
-plt.ylabel("Counts", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
-#plt.ylim(0,)                        c    #limits of y axis
+# #LYSO
+# plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
+# plt.bar(ADC_channel[:,0],counts_stored[:, 2], width = ADC_channel[1,2]-ADC_channel[0,2]) 
+#         #widht so that each bar touches each other!
+# plt.title("Spectra of Cs^{137} with LYSO", fontsize=24)           #title
+# plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+# plt.ylabel("Counts", fontsize=14)              #ylabel
+# # Set size of tick labels.
+# plt.tick_params(axis='both', labelsize=14)              #size of axis
+# plt.grid(True) 
+# plt.xlim(0,max(ADC_channel[:,0]))                       #limits of x axis
+# #plt.ylim(0,)                        c    #limits of y axis
 
 
 
@@ -159,8 +163,9 @@ plt.savefig('count_rate_Cs137_vs_scintillator_type.png', format='png')
 #Lets do the gaussian fit to the gamma () of Cs137, to see the FWHM as a function
 #of the scintillation crystal
 
-def gaussian(x, a, b, c):       #Definition of the function to use to fit the data
-    return a * np.exp(- (x-b)**2 / (2 * c**2)) 
+def gaussian(x, Heigh, Mean, Std_dev):
+    return Heigh * np.exp(- (x-Mean)**2 / (2 * Std_dev**2)) 
+    #
 
         #this is a gaussian function (more general than normal distribution)
         
@@ -171,8 +176,6 @@ def gaussian(x, a, b, c):       #Definition of the function to use to fit the da
         #FRIENDSHIP ENDED WITH math.exp(), NOW numpy.exp() IS MY 
         #BEST FRIEND
         #
-
-import Gaussian_fit    #my function that does the fit
 
 
 #$$$$$$$$$$$$$$$$$$$ CsI $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -190,8 +193,8 @@ peak_index = np.where(counts_stored[:,0] == peak)        #index
 #But, since here the peak do not have the max value, I will have to serach it 
 #by hand by looking at the .txt file #and the plot:
     
-index_min = 4923          #index that starts the peak (by looking the graph)
-index_max = 5741          #index that ends the peak (by looking the graph)
+index_min = 7300          #index that starts the peak (by looking the graph)
+index_max = 8300          #index that ends the peak (by looking the graph)
 
 
 ###Plot of the interval of the peak (indexes)
@@ -199,10 +202,9 @@ index_max = 5741          #index that ends the peak (by looking the graph)
 counts_peak = counts_stored[index_min-1:index_max-1,0] 
 ch_peak = ADC_channel[index_min-1:index_max-1,0]
 
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.figure(figsize=(10,6))                  #width, heigh 6.4*4.8 inches by default
 plt.plot( ADC_channel[:,0], counts_stored[:,0], 'b.-')    
 plt.plot( ch_peak , counts_peak, 'r.-')   
-        #widht so that each bar touches each other!
 plt.title("Cs137 with CsI", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
@@ -222,6 +224,8 @@ delta_mean_stored = np.array([])
 delta_sigma_stored = np.array([])
 FWHM_stored = np.array([])
 delta_FWHM_stored = np.array([])
+heigh_stored = np.array([])
+delta_heigh_stored = np.array([])
 
 
 sigma_stored = np.append(sigma_stored, fit['sigma'])
@@ -230,26 +234,54 @@ delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
 delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
 FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
 delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
+heigh_stored = np.append(heigh_stored, fit['heigh'])
+delta_heigh_stored = np.append(delta_heigh_stored, fit['\Delta(heigh)'])
 
+############
 
+#Plot of FWHM and Centroid for a peak. i will plot lines showing the channels for the CsI, the best.
 
+point_left_mean = mean_stored[0] - FWHM_stored[0] / 2        #Point to the left of the mean value with max ampl/2
+point_right_mean = mean_stored[0] + FWHM_stored[0] / 2       #Point to the right of the mean value with max ampl/2
+
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+#plt.plot( ADC_channel[:,0], counts_stored[:,0], 'b.-')    
+#plt.plot( ch_peak , counts_peak, 'b.-')   
+plt.bar(ch_peak, counts_peak, width = ADC_channel[1,2]-ADC_channel[0,2])        #peak
+plt.plot(ch_peak, gaussian(ch_peak, heigh_stored[0], mean_stored[0], sigma_stored[0]), 'ro')    #fit
+
+plt.plot(mean_stored[0] * np.array([1, 1]), [min(counts_stored[:,0]), max(counts_stored[:,0]) ], 'm--', linewidth=3 )
+                            #Vertical line for the centroid
+
+plt.plot(point_left_mean * np.array([1, 1]) , [min(counts_stored[:,0]), max(counts_stored[:,0]) ], 'k--', linewidth=3 )
+plt.plot(point_right_mean * np.array([1, 1]) , [min(counts_stored[:,0]), max(counts_stored[:,0]) ], 'k--', linewidth=3 )
+
+plt.title("Cs137 photopeak with CsI", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_CsI_R_visual.png', format='png')
+###
 
 
 
 #$$$$$$$$$$$$$$$$$$$ BGO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-index_min = 950#1036          #index that starts the peak (by looking the graph)
-index_max = 1273          #index that ends the peak (by looking the graph)
-
-
+index_min = 830#          #index that starts the peak (by looking the graph)
+index_max = 1150          #index that ends the peak (by looking the graph)
+                #830, 1150 for the 26_5 measurements (9000 ch)
+                #1100, 1400 for the 31/5 measurements
+                
 ###Plot of the interval of the peak (indexes)
 counts_peak = counts_stored[index_min-1:index_max-1,1] 
 ch_peak = ADC_channel[index_min-1:index_max-1,0]
 
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.figure(figsize=(10,6))                  #width, heigh 6.4*4.8 inches by default
 plt.plot( ADC_channel[:,0], counts_stored[:,1], 'b.-')      
 plt.plot( ch_peak , counts_peak, 'r.-')   
-        #widht so that each bar touches each other!
 plt.title("Cs137 with BGO", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
@@ -269,26 +301,50 @@ delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
 delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
 FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
 delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
+heigh_stored = np.append(heigh_stored, fit['heigh'])
+delta_heigh_stored = np.append(delta_heigh_stored, fit['\Delta(heigh)'])
 
+#Plot of FWHM and Centroid for a peak. i will plot lines showing the channels for the CsI, the best.
 
+point_left_mean = mean_stored[1] - FWHM_stored[1] / 2        #Point to the left of the mean value with max ampl/2
+point_right_mean = mean_stored[1] + FWHM_stored[1] / 2       #Point to the right of the mean value with max ampl/2
 
+#
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+#plt.plot( ADC_channel[:,0], counts_stored[:,0], 'b.-')    
+#plt.plot( ch_peak , counts_peak, 'b.-')   
+plt.bar(ch_peak, counts_peak, width = ADC_channel[1,2]-ADC_channel[0,2])        #peak
+plt.plot(ch_peak, gaussian(ch_peak, heigh_stored[1], mean_stored[1], sigma_stored[1]), 'ro')    #fit
+plt.plot(mean_stored[1] * np.array([1, 1]), [min(counts_stored[:,1]), max(counts_stored[:,1]) ], 'm--', linewidth=3 )
+                            #Vertical line for the centroid
+plt.plot(point_left_mean * np.array([1, 1]) , [min(counts_stored[:,1]), max(counts_stored[:,1]) ], 'k--', linewidth=3 )
+plt.plot(point_right_mean * np.array([1, 1]) , [min(counts_stored[:,1]), max(counts_stored[:,1]) ], 'k--', linewidth=3 )
+plt.title("Cs137 photopeak with BGO", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_BGO_R_visual.png', format='png')
 
 #$$$$$$$$$$$$$$$$$$$ LYSO $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 #here, again, the maximum peak is not the one of the gamma peak, so again have
 #to find the peak by hand :)
 
-index_min = 2548          #index that starts the peak (by looking the graph)
-index_max = 3191          #index that ends the peak (by looking the graph)
+index_min = 2531         #index that starts the peak (by looking the graph)
+index_max = 3181          #index that ends the peak (by looking the graph)
+                #2531, 3181 for the 26/5 measurements (9000ch)
+                #2800 3500 for the 31/5 measurements (600s)
 
 ###Plot of the interval of the peak (indexes)
 counts_peak = counts_stored[index_min-1:index_max-1,2] 
 ch_peak = ADC_channel[index_min-1:index_max-1,0]
 
-plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+plt.figure(figsize=(10,6))                  #width, heigh 6.4*4.8 inches by default
 plt.plot( ADC_channel[:,0], counts_stored[:,2], 'b.-')     
 plt.plot( ch_peak , counts_peak, 'r.-')   
-        #widht so that each bar touches each other!
 plt.title("Cs137 with LYSO", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
@@ -306,6 +362,33 @@ delta_mean_stored = np.append(delta_mean_stored, fit['\Delta(mean)'])
 delta_sigma_stored = np.append(delta_sigma_stored, fit['\Delta(sigma)'])
 FWHM_stored = np.append(FWHM_stored, fit['FWHM'])
 delta_FWHM_stored = np.append(delta_FWHM_stored, fit['\Delta(FWHM)'])
+heigh_stored = np.append(heigh_stored, fit['heigh'])
+delta_heigh_stored = np.append(delta_heigh_stored, fit['\Delta(heigh)'])
+
+#Plot of FWHM and Centroid for a peak. i will plot lines showing the channels for the CsI, the best.
+
+point_left_mean = mean_stored[2] - FWHM_stored[2] / 2        #Point to the left of the mean value with max ampl/2
+point_right_mean = mean_stored[2] + FWHM_stored[2] / 2       #Point to the right of the mean value with max ampl/2
+
+#
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
+#plt.plot( ADC_channel[:,0], counts_stored[:,0], 'b.-')    
+#plt.plot( ch_peak , counts_peak, 'b.-')   
+plt.bar(ch_peak, counts_peak, width = ADC_channel[1,2]-ADC_channel[0,2])        #peak
+plt.plot(ch_peak, gaussian(ch_peak, heigh_stored[2], mean_stored[2], sigma_stored[2]), 'ro')    #fit
+plt.plot(mean_stored[2] * np.array([1, 1]), [min(counts_stored[:,2]), max(counts_stored[:,2]) ], 'm--', linewidth=3 )
+                            #Vertical line for the centroid
+plt.plot(point_left_mean * np.array([1, 1]) , [min(counts_stored[:,2]), max(counts_stored[:,2]) ], 'k--', linewidth=3 )
+plt.plot(point_right_mean * np.array([1, 1]) , [min(counts_stored[:,2]), max(counts_stored[:,2]) ], 'k--', linewidth=3 )
+plt.title("Cs137 photopeak with LYSO", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ylabel("Counts", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Signal_LYSO_R_visual.png', format='png')
+
 
 
 #%% #########################################3############################
@@ -327,8 +410,14 @@ delta_R_stored = R_stored * sqrt_sum                                #delta(R[%])
 
 #Plot
 
+#I will rearrange them o that the order is from lower to higher! I must not alter the load order
+#since it will affect everything.
+            #load order: 'CsI', 'BGO', 'LYSO'
+            #order from low to high: 'CsI',  'LYSO', 'BGO'
+
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(['CsI', 'BGO', 'LYSO'], np.absolute( R_stored), yerr = delta_R_stored, edgecolor="black")
+plt.bar(['CsI','LYSO', 'BGO'], np.absolute( np.array( [R_stored[0], R_stored[2], R_stored[1]] )), 
+        yerr = np.array( [delta_R_stored[0], delta_R_stored[2], delta_R_stored[1]] ), edgecolor="black")
 plt.title("Resolution of the Cs137 peak", fontsize=22, wrap=True)           #title
 plt.ylabel("R (%)", fontsize=14)              #ylabel
 plt.tick_params(axis='both', labelsize=14)              #size of axis
@@ -336,22 +425,23 @@ plt.grid(True)
 plt.savefig('Resolution_vs_scintillator.png', format='png')
 
 
-
 ###print
 
 #Print:
-print('FWHM CsI: ' + str(FWHM_stored[0]) + ' +/- ' + str(delta_FWHM_stored[0]))
-print('FWHM BGO: ' + str(FWHM_stored[1]) + ' +/- ' + str(delta_FWHM_stored[1]))
-print('FWHM LYSO: ' + str(FWHM_stored[2]) + ' +/- ' + str(delta_FWHM_stored[2])+"\n")
 
-print('<channels> CsI: ' + str(mean_stored[0]) + ' +/- ' + str(delta_mean_stored[0]))
-print('<channels> BGO: ' + str(mean_stored[1]) + ' +/- ' + str(delta_mean_stored[1]))
-print('<channels> LYSO: ' + str(mean_stored[2]) + ' +/- ' + str(delta_mean_stored[2])+"\n")
+print('FWHM BGO: ' + str(FWHM_stored[1]) + ' +/- ' + str(delta_FWHM_stored[1]) )
+print('FWHM LYSO: ' + str(FWHM_stored[2]) + ' +/- ' + str(delta_FWHM_stored[2]) )
+print('FWHM CsI: ' + str(FWHM_stored[0]) + ' +/- ' + str(delta_FWHM_stored[0])+"\n")
 
-print('R CsI: ' + str(R_stored[0]) + ' +/- ' + str(delta_R_stored[0]))
-print('R BGO: ' + str(R_stored[1]) + ' +/- ' + str(delta_R_stored[1]))
-print('R LYSO: ' + str(R_stored[2]) + ' +/- ' + str(delta_R_stored[2]) + '\n')
 
+print('<channels> BGO: ' + str(mean_stored[1]) + ' +/- ' + str(delta_mean_stored[1]) )
+print('<channels> LYSO: ' + str(mean_stored[2]) + ' +/- ' + str(delta_mean_stored[2]) )
+print('<channels> CsI: ' + str(mean_stored[0]) + ' +/- ' + str(delta_mean_stored[0]) +"\n")
+
+
+print('R BGO: ' + str(R_stored[1]) + ' +/- ' + str(delta_R_stored[1]) )
+print('R LYSO: ' + str(R_stored[2]) + ' +/- ' + str(delta_R_stored[2]) )
+print('R CsI: ' + str(R_stored[0]) + ' +/- ' + str(delta_R_stored[0]) +'\n')
 
 ####note that due to a computer error, the sigma of the BGO is engative, which leads to negative
 #resolution. But this failure is more or less normal, forget it and move on!!
@@ -450,9 +540,9 @@ plt.grid(True)
 plt.savefig('Ratio_total_counts_vs_scintillator.png', format='png')
 
 
-print('Ratio LYSO/CsI: (' + str(ratio_total_counts[0]) + ' +/- ' + str(delta_ratio_total_counts[0]) )
-print('Ratio LYSO/BGO: (' + str(ratio_total_counts[1]) + ' +/- ' + str(delta_ratio_total_counts[1]) )
-print('Ratio BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) + '\n' )
+print('Ratio counts LYSO/CsI: (' + str(ratio_total_counts[0]) + ' +/- ' + str(delta_ratio_total_counts[0]) )
+print('Ratio counts LYSO/BGO: (' + str(ratio_total_counts[1]) + ' +/- ' + str(delta_ratio_total_counts[1]) )
+print('Ratio counts BGO/CsI: (' + str(ratio_total_counts[2]) + ' +/- ' + str(delta_ratio_total_counts[2]) + '\n' )
 
 
 #Strange results, but in fact we do not know if this is the light yield ratio or not xD.
