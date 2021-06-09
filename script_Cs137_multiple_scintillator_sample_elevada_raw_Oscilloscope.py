@@ -244,233 +244,9 @@ plt.savefig('Signals.png', format='png')
 plt.savefig('Waves_BGO.png', format='png')
 
 
-#%% ###############################################################################
-########################### Rise and decay time#####################################
-###################################################################################
-
-#This is the data from the new measurements, using the threshold to only measure
-#the gamma peak. The old results are commented
-
-#Variables that will store(st) the results 
-t_rise_st = np.array([])
-t_decay_st = np.array([])
-delta_t_rise_st = np.array([])
-delta_t_decay_st = np.array([])
-
-###################################LYSO RAW########################
-#the error  is basically is 1/5 of the escale, since each square is divided
-                #into 5 intervals, and the scale is the length of the sides of
-                #the square
-#RAW
-
-t_rise, delta_t_rise = 70, 1/5*50        #[ns] rise time and its error
-t_decay, delta_t_decay = 890, 1/5*250   #[ns] decay time and its error
-  
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-############################CsI RAW#####################3#####
-
-t_rise, delta_t_rise = 380, 1/5*250        #[ns] rise time and its error
-t_decay, delta_t_decay = 4.32e3, 1/5*1e3   #[ns] decay time and its error
-  
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-####################################BGO RAW###################
-
-t_rise, delta_t_rise = 176, 1/5*100        #[ns] rise time and its error
-t_decay, delta_t_decay = 1.54e3, 1/5*500   #[ns] decay time and its error
-  
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-
-#################################LYSO PRE##################3####
-
-t_rise, delta_t_rise = 64, 1/5*50        #[ns] rise time and its error
-t_decay, delta_t_decay = 690, 1/5*250   #[ns] decay time and its error
-  
-
-#new waveform, not weird (20_5_21):
-    #t rise = 70ns, escala 100ns==> error 50/5ns = 10ns
-    #t decay = 530ns, error de 1/5 * 100ns = 20ns
-    
-    
-#wave, no plitter, 24_5 (the last one is not this, but 2 waves together!!!)
-    #t dec: 680ns, error 100/5 ns
-    #t rise: 94 ns, error 1/5 50ns
-
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-
-###############################CsI PRE#########################
-
-t_rise, delta_t_rise = 360, 1/5*250        #[ns] rise time and its error
-t_decay, delta_t_decay = 3.34e3, 1/5*500   #[ns] decay time and its error
-  
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-#new waveform, not weird (21_5_21):
-    #t rise = 310ns,  error 250/5ns
-    #t decay = 4.08us, error de 1us/5  
-
-#wave, no plitter, 24_5
-    #t dec: 6.52us, error 1/5 us
-    #t rise: 310nsm error 250*1/5ns
-
-###############################3###BGO Pre############################
-
-t_rise, delta_t_rise = 184, 1/5*100        #[ns] rise time and its error
-t_decay, delta_t_decay = 1.48e3, 1/5*100   #[ns] decay time and its error
-  
-#storing
-t_rise_st = np.append(t_rise_st,t_rise)
-t_decay_st = np.append(t_decay_st,t_decay)
-delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
-delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
-
-#new waveform, not weird (21_5_21):
-    #t rise = 165ns,  error 100/5ns 
-    #t decay = 1.52us, error de 500ns/5  
-    
-#wave, no plitter, 24_5
-    #t dec: 1.62 us, error 500/5 ns
-    #t rise: 132 ns, error 1/5 100ns 
-
-    
-####Plot
-
-#have to reorder the data so that they are arranged from lowest to highers: LYSO-->BGO-->CsI
-#the current order (storing order) is LYSO-->CsI-->BGO. I must not change the storing order since
-#it would affect everyhing, so I will alter the plot order!!
-
-#RAW
-
-plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
-plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the raw signal of the Cs137 waveform", fontsize=22, wrap=True)           #title
-plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[0], t_rise_st[2], t_rise_st[1] ])*1e-3, 
-        yerr = np.array([delta_t_rise_st[0], delta_t_rise_st[2], delta_t_rise_st[1] ])*1e-3, 
-        edgecolor="black")
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-
-plt.subplot(1, 2, 2)
-plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[0], t_decay_st[2], t_decay_st[1] ])*1e-3, 
-        yerr = np.array([delta_t_decay_st[0], delta_t_decay_st[2], delta_t_decay_st[1] ])*1e-3, 
-        edgecolor="black")
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.savefig('Rise_decay_time_raw.png', format='png')
-
-
-#Print:
-print('Decay time of raw LYSO: (' + str(t_decay_st[0]*1e-3) + ' +/- ' + str(delta_t_decay_st[0]*1e-3) + ')us')
-print('Decay time of raw BGO: (' + str(t_decay_st[2]*1e-3) + ' +/- ' + str(delta_t_decay_st[2]*1e-3) + ')us')
-print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e-3) + ' +/- ' + str(delta_t_decay_st[1]*1e-3) + ')us' +"\n")
-
-#################################################
-
-#Pre
-
-plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
-plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the signal of the Cs137 waveform", fontsize=22, wrap=True)    #title
-plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[3], t_rise_st[5], t_rise_st[4] ])*1e-3, 
-        yerr = np.array([delta_t_rise_st[3], delta_t_rise_st[5], delta_t_rise_st[4] ])*1e-3, 
-        edgecolor="black")
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-
-plt.subplot(1, 2, 2)
-plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[3], t_decay_st[5], t_decay_st[4] ])*1e-3, 
-        yerr = np.array([delta_t_decay_st[3], delta_t_decay_st[5], delta_t_decay_st[4] ])*1e-3, 
-        edgecolor="black")
-#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
-# Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
-plt.grid(True) 
-plt.savefig('Rise_decay_time_pre.png', format='png')
-
-
-#Print:
-print('Decay time of pre LYSO: (' + str(t_decay_st[3]*1e-3) + ' +/- ' + str(delta_t_decay_st[3]*1e-3) + ')us')
-print('Decay time of pre BGO: (' + str(t_decay_st[5]*1e-3) + ' +/- ' + str(delta_t_decay_st[5]*1e-3) + ')us')
-print('Decay time of pre CsI: (' + str(t_decay_st[4]*1e-3) + ' +/- ' + str(delta_t_decay_st[4]*1e-3) + ')us' +"\n")
-##############################################
-
-#ratio between the decay time from the pre and from the detector
-ratio_t_decay_pre_raw = t_decay_st[3:6]/t_decay_st[0:3] #correct indexes, yes
-print('Ratio t_decay pre/raw: (LYSO, BGO, CsI) ' + str(ratio_t_decay_pre_raw) + '\n')
-
-#Lets now comput the ratio of the decay time, of both signals, raw and pre.
-
-#0,1,2 raw of LYSO, CsI, BGO respect
-#3,4,5 pre of LYSO, CsI, BGO respect
-
-ratio_decay = np.array( [t_decay_st[0]/t_decay_st[1], t_decay_st[0]/t_decay_st[2], 
-                         t_decay_st[2]/t_decay_st[1], t_decay_st[3]/t_decay_st[4],
-                         t_decay_st[3]/t_decay_st[5], t_decay_st[5]/t_decay_st[4]
-                         ]  )
-                  #The order is: LYSO/CsI,  LYSO/BGO,  BGO/CsI; first raw and then pre
-
-    
-#Error calculation of the ratio
-auxiliar2 = np.array( [(delta_t_decay_st[0]/t_decay_st[0])**2 + (delta_t_decay_st[1]/t_decay_st[1])**2, 
-            (delta_t_decay_st[0]/t_decay_st[0])**2 + (delta_t_decay_st[2]/t_decay_st[2])**2,
-            (delta_t_decay_st[2]/t_decay_st[2])**2 + (delta_t_decay_st[1]/t_decay_st[1])**2,
-            (delta_t_decay_st[3]/t_decay_st[3])**2 + (delta_t_decay_st[4]/t_decay_st[4])**2, 
-            (delta_t_decay_st[3]/t_decay_st[3])**2 + (delta_t_decay_st[5]/t_decay_st[5])**2,
-            (delta_t_decay_st[5]/t_decay_st[5])**2 + (delta_t_decay_st[4]/t_decay_st[4])**2,
-            ] )
-            #this are (delta_t1/t1)^2 +  (delta_t2/t2)^2, each row is this, in the order of the 
-            #variable ratio_decay. This is basically the thing to be squared rooted to compute the 
-            #error
-
-delta_ratios = ratio_decay * np.sqrt(auxiliar2)
-                                             #this will be though
-
-print('Decay time ratio of raw BGO/CsI: (' + str(ratio_decay[2]) + ' +/- ' + str(delta_ratios[2]))
-print('Decay time ratio of raw LYSO/CsI: (' + str(ratio_decay[0]) + ' +/- ' + str(delta_ratios[0]) )
-print('Decay time ratio of raw LYSO/BGO: (' + str(ratio_decay[1]) + ' +/- ' + str(delta_ratios[1]) +"\n" )
-
-print('Decay time ratio of pre BGO/CsI: (' + str(ratio_decay[5]) + ' +/- ' + str(delta_ratios[5]))
-print('Decay time ratio of pre LYSO/CsI: (' + str(ratio_decay[3]) + ' +/- ' + str(delta_ratios[3]))
-print('Decay time ratio of pre LYSO/BGO: (' + str(ratio_decay[4]) + ' +/- ' + str(delta_ratios[4]) +"\n")
-
-
-
 
  #%% ########################################################################
- ###################3) Calcs of the light yield############################################
+ ###################3) Pulse analysis ############################################
 ###############################################################################
 
 #Since the signals from the Pre are way better, will use them. Remember they are
@@ -497,7 +273,10 @@ delta_single_V_measurement = np.array([])         #storage of the error of the v
 integral_st = np.array([])                      #peak integral
 delta_integral_st = np.array([])                #error of the peak integral (overstimation)
 
-#len_baseline_signal_points_stored = np.array([])
+t_rise_st = np.array([])
+t_decay_st = np.array([])
+delta_t_rise_st = np.array([])
+delta_t_decay_st = np.array([])
 
 
 
@@ -508,21 +287,32 @@ delta_integral_st = np.array([])                #error of the peak integral (ove
 ##################
 #################
 #################
-
+#%% 
 ####################################LYSO PRE ##########################3
 
 LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,3, 660, 1140, 
                                                  1/5 *1, 1/5 * 250e-9 )
 
+#Debug
+#t_decayy = time_stored[1140,3]*1e6 - time_stored[703,3] *1e6 
+#     			#time when the peak ends - time when the max value is reached
+# t_rise = -time_stored[660,3]*1e6 + time_stored[703,3]*1e6  #peak - start
+# 		# -time when the peak starts + time when the max value is reached
+
+
 #Storing
 
-baseline_st = np.append(baseline_st, LYSO_pre['baseline[V]'][0] )  
-    #   DO NOT UNDERSAND WHY, BUT AN ARRAY IS GIVEN SO YOU HAE TO TYPE [0] :)))))))))))))))))))))))))
+baseline_st = np.append(baseline_st, LYSO_pre['baseline[V]'] )  
 peak_st = np.append(peak_st, LYSO_pre['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, LYSO_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, LYSO_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, LYSO_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, LYSO_pre['\Delta(integral[V*s])'] )
+
+t_rise_st = np.append(t_rise_st,LYSO_pre['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,LYSO_pre['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,LYSO_pre['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,LYSO_pre['\Delta(t_decay[s])'])
 
 
 ###############################################CsI PRE   #####################
@@ -532,12 +322,18 @@ CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_s
 
 #Storing
 
-baseline_st = np.append(baseline_st, CsI_pre['baseline[V]'][0] )  
+baseline_st = np.append(baseline_st, CsI_pre['baseline[V]'] )  
 peak_st = np.append(peak_st, CsI_pre['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, CsI_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, CsI_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, CsI_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, CsI_pre['\Delta(integral[V*s])'] )
+
+t_rise_st = np.append(t_rise_st,CsI_pre['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,CsI_pre['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,CsI_pre['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,CsI_pre['\Delta(t_decay[s])'])
+
 
 
 
@@ -548,12 +344,18 @@ BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_s
 
 #Storing
 
-baseline_st = np.append(baseline_st, BGO_pre['baseline[V]'][0] )  
+baseline_st = np.append(baseline_st, BGO_pre['baseline[V]'] )  
 peak_st = np.append(peak_st, BGO_pre['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, BGO_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, BGO_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, BGO_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, BGO_pre['\Delta(integral[V*s])'] )
+
+t_rise_st = np.append(t_rise_st,BGO_pre['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,BGO_pre['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,BGO_pre['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,BGO_pre['\Delta(t_decay[s])'])
+
 
 
 ######################
@@ -567,13 +369,18 @@ LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_
 
 #Storing
 
-baseline_st = np.append(baseline_st, LYSO_raw['baseline[V]'][0] )  
-    #   DO NOT UNDERSAND WHY, BUT AN ARRAY IS GIVEN SO YOU HAE TO TYPE [0] :)))))))))))))))))))))))))
+baseline_st = np.append(baseline_st, LYSO_raw['baseline[V]'] )  
 peak_st = np.append(peak_st, LYSO_raw['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, LYSO_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, LYSO_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, LYSO_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, LYSO_raw['\Delta(integral[V*s])'] )
+
+t_rise_st = np.append(t_rise_st,LYSO_raw['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,LYSO_raw['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,LYSO_raw['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,LYSO_raw['\Delta(t_decay[s])'])
+
 
 
 ####################################CsI RAW ##########################3
@@ -583,13 +390,18 @@ CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_s
 
 #Storing
 
-baseline_st = np.append(baseline_st, CsI_raw['baseline[V]'][0] )  
-    #   DO NOT UNDERSAND WHY, BUT AN ARRAY IS GIVEN SO YOU HAE TO TYPE [0] :)))))))))))))))))))))))))
+baseline_st = np.append(baseline_st, CsI_raw['baseline[V]'] )  
 peak_st = np.append(peak_st, CsI_raw['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, CsI_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, CsI_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, CsI_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, CsI_raw['\Delta(integral[V*s])'] )
+
+t_rise_st = np.append(t_rise_st,CsI_raw['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,CsI_raw['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,CsI_raw['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,CsI_raw['\Delta(t_decay[s])'])
+
 
 
 ####################################BGO RAW##########################3
@@ -599,16 +411,135 @@ BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_s
 
 #Storing
 
-baseline_st = np.append(baseline_st, BGO_raw['baseline[V]'][0] )  
-    #   DO NOT UNDERSAND WHY, BUT AN ARRAY IS GIVEN SO YOU HAE TO TYPE [0] :)))))))))))))))))))))))))
+baseline_st = np.append(baseline_st, BGO_raw['baseline[V]'] )  
 peak_st = np.append(peak_st, BGO_raw['peak[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, BGO_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, BGO_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, BGO_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, BGO_raw['\Delta(integral[V*s])'] )
 
-##########################################################
-#########################################################
+t_rise_st = np.append(t_rise_st,BGO_raw['t_rise[s]'])
+t_decay_st = np.append(t_decay_st,BGO_raw['t_decay[s]'])
+delta_t_rise_st = np.append(delta_t_rise_st,BGO_raw['\Delta(t_rise[s])'])
+delta_t_decay_st = np.append(delta_t_decay_st,BGO_raw['\Delta(t_decay[s])'])
+
+
+##############################################################################
+##################PLOT OF TIMES####################################################
+###################################################################################
+
+
+#have to reorder the data so that they are arranged from lowest to highers: LYSO-->BGO-->CsI
+#the current order (storing order) is LYSO-->CsI-->BGO. I must not change the storing order since
+#it would affect everyhing, so I will alter the plot order!!
+
+#RAW
+
+plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
+plt.subplot(1, 2, 1)
+plt.suptitle("Rise and decay time of the raw signal of the Cs137 waveform", fontsize=22, wrap=True)           #title
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[0], t_rise_st[2], t_rise_st[1] ])*1e6, 
+        yerr = np.array([delta_t_rise_st[0], delta_t_rise_st[2], delta_t_rise_st[1] ])*1e6, 
+        edgecolor="black")
+#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+
+plt.subplot(1, 2, 2)
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[0], t_decay_st[2], t_decay_st[1] ])*1e6, 
+        yerr = np.array([delta_t_decay_st[0], delta_t_decay_st[2], delta_t_decay_st[1] ])*1e6, 
+        edgecolor="black")
+#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Rise_decay_time_raw.png', format='png')
+
+
+#Print:
+print('Decay time of raw LYSO: (' + str(t_decay_st[0]*1e6) + ' +/- ' + str(delta_t_decay_st[0]*1e6) + ')us')
+print('Decay time of raw BGO: (' + str(t_decay_st[2]*1e6) + ' +/- ' + str(delta_t_decay_st[2]*1e6) + ')us')
+print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e6) + ' +/- ' + str(delta_t_decay_st[1]*1e6) + ')us' +"\n")
+
+#################################################
+
+#Pre
+
+plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
+plt.subplot(1, 2, 1)
+plt.suptitle("Rise and decay time of the signal of the Cs137 waveform", fontsize=22, wrap=True)    #title
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[3], t_rise_st[5], t_rise_st[4] ])*1e6, 
+        yerr = np.array([delta_t_rise_st[3], delta_t_rise_st[5], delta_t_rise_st[4] ])*1e6, 
+        edgecolor="black")
+#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.ylabel("Rise time (us)", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+
+plt.subplot(1, 2, 2)
+plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_decay_st[3], t_decay_st[5], t_decay_st[4] ])*1e6, 
+        yerr = np.array([delta_t_decay_st[3], delta_t_decay_st[5], delta_t_decay_st[4] ])*1e6, 
+        edgecolor="black")
+#plt.xlabel("ADC channels", fontsize=10)                        #xlabel
+plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
+# Set size of tick labels.
+plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.grid(True) 
+plt.savefig('Rise_decay_time_pre.png', format='png')
+
+
+#Print:
+print('Decay time of pre LYSO: (' + str(t_decay_st[3]*1e6) + ' +/- ' + str(delta_t_decay_st[3]*1e6) + ')us')
+print('Decay time of pre BGO: (' + str(t_decay_st[5]*1e6) + ' +/- ' + str(delta_t_decay_st[5]*1e6) + ')us')
+print('Decay time of pre CsI: (' + str(t_decay_st[4]*1e6) + ' +/- ' + str(delta_t_decay_st[4]*1e6) + ')us' +"\n")
+##############################################
+
+#ratio between the decay time from the pre and from the detector
+ratio_t_decay_pre_raw = t_decay_st[3:6]/t_decay_st[0:3] #correct indexes, yes
+print('Ratio t_decay pre/raw: (LYSO, BGO, CsI) ' + str(ratio_t_decay_pre_raw) + '\n')
+
+#Lets now comput the ratio of the decay time, of both signals, raw and pre.
+
+#0,1,2 raw of LYSO, CsI, BGO respect
+#3,4,5 pre of LYSO, CsI, BGO respect
+
+ratio_decay = np.array( [t_decay_st[0]/t_decay_st[1], t_decay_st[0]/t_decay_st[2], 
+                          t_decay_st[2]/t_decay_st[1], t_decay_st[3]/t_decay_st[4],
+                          t_decay_st[3]/t_decay_st[5], t_decay_st[5]/t_decay_st[4]
+                          ]  )
+                  #The order is: LYSO/CsI,  LYSO/BGO,  BGO/CsI; first raw and then pre
+
+    
+#Error calculation of the ratio
+auxiliar2 = np.array( [(delta_t_decay_st[0]/t_decay_st[0])**2 + (delta_t_decay_st[1]/t_decay_st[1])**2, 
+            (delta_t_decay_st[0]/t_decay_st[0])**2 + (delta_t_decay_st[2]/t_decay_st[2])**2,
+            (delta_t_decay_st[2]/t_decay_st[2])**2 + (delta_t_decay_st[1]/t_decay_st[1])**2,
+            (delta_t_decay_st[3]/t_decay_st[3])**2 + (delta_t_decay_st[4]/t_decay_st[4])**2, 
+            (delta_t_decay_st[3]/t_decay_st[3])**2 + (delta_t_decay_st[5]/t_decay_st[5])**2,
+            (delta_t_decay_st[5]/t_decay_st[5])**2 + (delta_t_decay_st[4]/t_decay_st[4])**2,
+            ] )
+            #this are (delta_t1/t1)^2 +  (delta_t2/t2)^2, each row is this, in the order of the 
+            #variable ratio_decay. This is basically the thing to be squared rooted to compute the 
+            #error
+
+delta_ratios = ratio_decay * np.sqrt(auxiliar2)
+                                              #this will be though
+
+print('Decay time ratio of raw BGO/CsI: (' + str(ratio_decay[2]) + ' +/- ' + str(delta_ratios[2]))
+print('Decay time ratio of raw LYSO/CsI: (' + str(ratio_decay[0]) + ' +/- ' + str(delta_ratios[0]) )
+print('Decay time ratio of raw LYSO/BGO: (' + str(ratio_decay[1]) + ' +/- ' + str(delta_ratios[1]) +"\n" )
+
+print('Decay time ratio of pre BGO/CsI: (' + str(ratio_decay[5]) + ' +/- ' + str(delta_ratios[5]))
+print('Decay time ratio of pre LYSO/CsI: (' + str(ratio_decay[3]) + ' +/- ' + str(delta_ratios[3]))
+print('Decay time ratio of pre LYSO/BGO: (' + str(ratio_decay[4]) + ' +/- ' + str(delta_ratios[4]) +"\n")
+
+
+
+#############################AMPLITUDES#####################################
 
 
 #The amplitude of the signal wil be the difference between the baseline and the
@@ -717,6 +648,113 @@ print('Integral (no baseline) ratio  LYSO/BGO = ' + str(ratio_int[2]) + ' +- ' +
 
 
 
+
+
+######REsiduo: Rise and decay time del osciloscopio#####################################
+###################################################################################
+
+# #This is the data from the new measurements, using the threshold to only measure
+# #the gamma peak. The old results are commented
+
+# #Variables that will store(st) the results 
+
+
+# ###################################LYSO RAW########################
+# #the error  is basically is 1/5 of the escale, since each square is divided
+#                 #into 5 intervals, and the scale is the length of the sides of
+#                 #the square
+# #RAW
+
+# t_rise, delta_t_rise = 70, 1/5*50        #[ns] rise time and its error
+# t_decay, delta_t_decay = 890, 1/5*250   #[ns] decay time and its error
+  
+# #storing
+
+
+# ############################CsI RAW#####################3#####
+
+# t_rise, delta_t_rise = 380, 1/5*250        #[ns] rise time and its error
+# t_decay, delta_t_decay = 4.32e3, 1/5*1e3   #[ns] decay time and its error
+  
+# #storing
+# t_rise_st = np.append(t_rise_st,t_rise)
+# t_decay_st = np.append(t_decay_st,t_decay)
+# delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
+# delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
+
+# ####################################BGO RAW###################
+
+# t_rise, delta_t_rise = 176, 1/5*100        #[ns] rise time and its error
+# t_decay, delta_t_decay = 1.54e3, 1/5*500   #[ns] decay time and its error
+  
+# #storing
+# t_rise_st = np.append(t_rise_st,t_rise)
+# t_decay_st = np.append(t_decay_st,t_decay)
+# delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
+# delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
+
+
+# #################################LYSO PRE##################3####
+
+# t_rise, delta_t_rise = 64, 1/5*50        #[ns] rise time and its error
+# t_decay, delta_t_decay = 690, 1/5*250   #[ns] decay time and its error
+  
+
+# #new waveform, not weird (20_5_21):
+#     #t rise = 70ns, escala 100ns==> error 50/5ns = 10ns
+#     #t decay = 530ns, error de 1/5 * 100ns = 20ns
+    
+    
+# #wave, no plitter, 24_5 (the last one is not this, but 2 waves together!!!)
+#     #t dec: 680ns, error 100/5 ns
+#     #t rise: 94 ns, error 1/5 50ns
+
+# #storing
+# t_rise_st = np.append(t_rise_st,t_rise)
+# t_decay_st = np.append(t_decay_st,t_decay)
+# delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
+# delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
+
+
+# ###############################CsI PRE#########################
+
+# t_rise, delta_t_rise = 360, 1/5*250        #[ns] rise time and its error
+# t_decay, delta_t_decay = 3.34e3, 1/5*500   #[ns] decay time and its error
+  
+# #storing
+# t_rise_st = np.append(t_rise_st,t_rise)
+# t_decay_st = np.append(t_decay_st,t_decay)
+# delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
+# delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
+
+# #new waveform, not weird (21_5_21):
+#     #t rise = 310ns,  error 250/5ns
+#     #t decay = 4.08us, error de 1us/5  
+
+# #wave, no plitter, 24_5
+#     #t dec: 6.52us, error 1/5 us
+#     #t rise: 310nsm error 250*1/5ns
+
+# ###############################3###BGO Pre############################
+
+# t_rise, delta_t_rise = 184, 1/5*100        #[ns] rise time and its error
+# t_decay, delta_t_decay = 1.48e3, 1/5*100   #[ns] decay time and its error
+  
+# #storing
+# t_rise_st = np.append(t_rise_st,t_rise)
+# t_decay_st = np.append(t_decay_st,t_decay)
+# delta_t_rise_st = np.append(delta_t_rise_st,delta_t_rise)
+# delta_t_decay_st = np.append(delta_t_decay_st,delta_t_decay)
+
+# #new waveform, not weird (21_5_21):
+#     #t rise = 165ns,  error 100/5ns 
+#     #t decay = 1.52us, error de 500ns/5  
+    
+# #wave, no plitter, 24_5
+#     #t dec: 1.62 us, error 500/5 ns
+#     #t rise: 132 ns, error 1/5 100ns 
+
+    
 
 
 
