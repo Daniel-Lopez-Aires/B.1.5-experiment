@@ -148,7 +148,7 @@ plt.plot(1e6 *time_stored[:,2], voltage_stored[:,2] - (baseline_raw[2]- baseline
 
 plt.xlabel("time (us)", fontsize=14)                        #xlabel
 plt.ylabel("voltage (V)", fontsize=14)              #ylabel
-plt.legend(['LYSO', 'CsI', 'BGO'], fontsize=10) 
+plt.legend(['LYSO', 'CsI', 'BGO'], fontsize=16) 
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
@@ -168,7 +168,7 @@ plt.plot(1e6 *time_stored[:,5], voltage_stored[:,5], 'r-')
 
 plt.xlabel("time (us)", fontsize=14)                        #xlabel
 plt.ylabel("voltage (V)", fontsize=14)              #ylabel
-plt.legend(['LYSO', 'CsI', 'BGO'], fontsize=10) 
+plt.legend(['LYSO', 'CsI', 'BGO'], fontsize=16) 
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
@@ -189,7 +189,7 @@ plt.xlabel("time (us)", fontsize=14)                        #xlabel
 plt.ylabel("voltage (V)", fontsize=14)              #ylabel
 plt.legend(['from detector', 'from SP5600'], fontsize=14, loc = 'lower right') 
 # Set size of tick labels.
-plt.tick_params(axis='both', labelsize=14)              #size of axis
+plt.tick_params(axis='both', labelsize=16)              #size of axis
 plt.grid(True) 
 #plt.xlim(0,max(ADC_channel))                       #limits of x axis    
 plt.savefig('Waves_LYSO.png', format='png')
@@ -203,7 +203,7 @@ plt.plot(1e6 *time_stored[:,1], voltage_stored[:,1] -.8 )
 plt.plot(1e6 *time_stored[:,4], voltage_stored[:,4] )
 plt.xlabel("time (us)", fontsize=14)                        #xlabel
 plt.ylabel("voltage (V)", fontsize=14)              #ylabel
-plt.legend(['from detector', 'from SP5600'], fontsize=14, loc = 'lower right') 
+plt.legend(['from detector', 'from SP5600'], fontsize=16, loc = 'lower right') 
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
@@ -219,7 +219,7 @@ plt.plot(1e6 *time_stored[:,2], voltage_stored[:,2] -1.2 )
 plt.plot(1e6 *time_stored[:,5], voltage_stored[:,5] )
 plt.xlabel("time (us)", fontsize=14)                        #xlabel
 plt.ylabel("voltage (V)", fontsize=14)              #ylabel
-plt.legend(['from detector', 'from SP5600'], fontsize=14, loc = 'lower right')  
+plt.legend(['from detector', 'from SP5600'], fontsize=16, loc = 'lower right')  
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
@@ -420,7 +420,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,BGO_raw['\Delta(t_decay[s])'])
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the raw signal of the Cs137 waveform", fontsize=22, wrap=True)           #title
+plt.suptitle("Rise and decay time of the raw signals coming from the crystals", fontsize=22, wrap=True)           #title
 plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[0], t_rise_st[2], t_rise_st[1] ])*1e6, 
         yerr = np.array([delta_t_rise_st[0], delta_t_rise_st[2], delta_t_rise_st[1] ])*1e6, 
         edgecolor="black")
@@ -453,7 +453,7 @@ print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e6) + ' +/- ' + str(delta_
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the signal of the Cs137 waveform", fontsize=22, wrap=True)    #title
+plt.suptitle("Rise and decay time of the signals coming from the crystals", fontsize=22, wrap=True)    #title
 plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[3], t_rise_st[5], t_rise_st[4] ])*1e6, 
         yerr = np.array([delta_t_rise_st[3], delta_t_rise_st[5], delta_t_rise_st[4] ])*1e6, 
         edgecolor="black")
