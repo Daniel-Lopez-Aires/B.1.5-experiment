@@ -139,16 +139,17 @@ rate_stored = np.column_stack((rate_stored,load[2]))
 
 ###Plot combined, as CAEN's
 #plotting the count rate, since the measure time is differen!!
-plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
+plt.figure(figsize=(10,6))  #width, heigh 6.4*4.8 inches by default
 plt.plot(ADC_channel[:,0], rate_stored[:,0], color='black', label = 'CsI')    
 plt.plot(ADC_channel[:,0], rate_stored[:,1], color = 'red', label = 'BGO')
 plt.plot(ADC_channel[:,0], rate_stored[:,2], color = 'blue', label = 'LYSO')      
-plt.legend(['CsI', 'BGO', 'LYSO'], fontsize=10) 
-plt.title("Cs137 spectra", fontsize=20)           #title
-plt.xlabel("ADC channels", fontsize=10)                        #xlabel
-plt.ylabel("Count rate (Hz)", fontsize=10)              #ylabel
+plt.legend(['CsI', 'BGO', 'LYSO'], fontsize=16) 
+plt.title("Cs137 spectra", fontsize=22)           #title
+plt.xlabel("ADC channels", fontsize=14)                        #xlabel
+plt.ticklabel_format(axis='x', style='sci', scilimits=(-2,2))       #scientific notation on X label
+plt.ylabel("Count rate (Hz)", fontsize=14)              #ylabel
 # Set size of tick labels.
-plt.tick_params(axis='both', labelsize=10)              #size of axis
+plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 plt.savefig('count_rate_Cs137_vs_scintillator_type.png', format='png')
 
@@ -260,7 +261,7 @@ plt.title("Cs137 photopeak with CsI", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
-plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=16) 
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 plt.savefig('Signal_CsI_R_visual.png', format='png')
@@ -277,7 +278,7 @@ index_max = 1150          #index that ends the peak (by looking the graph)
                 
 ###Plot of the interval of the peak (indexes)
 counts_peak = counts_stored[index_min-1:index_max-1,1] 
-ch_peak = ADC_channel[index_min-1:index_max-1,0]
+ch_peak = ADC_channel[index_min-1:index_max-1,0]        
 
 plt.figure(figsize=(10,6))                  #width, heigh 6.4*4.8 inches by default
 plt.plot( ADC_channel[:,0], counts_stored[:,1], 'b.-')      
@@ -323,7 +324,7 @@ plt.title("Cs137 photopeak with BGO", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
-plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=16) 
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 plt.savefig('Signal_BGO_R_visual.png', format='png')
@@ -384,7 +385,7 @@ plt.title("Cs137 photopeak with LYSO", fontsize=22)           #title
 plt.xlabel("ADC channels", fontsize=14)                        #xlabel
 plt.ylabel("Counts", fontsize=14)              #ylabel
 # Set size of tick labels.
-plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=10) 
+plt.legend(['fit', 'Centroid', 'FWHM'], fontsize=16) 
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
 plt.savefig('Signal_LYSO_R_visual.png', format='png')
@@ -416,9 +417,9 @@ delta_R_stored = R_stored * sqrt_sum                                #delta(R[%])
             #order from low to high: 'CsI',  'LYSO', 'BGO'
 
 plt.figure(figsize=(8,5))  #width, heigh 6.4*4.8 inches by default
-plt.bar(['CsI','LYSO', 'BGO'], np.absolute( np.array( [R_stored[0], R_stored[2], R_stored[1]] )), 
-        yerr = np.array( [delta_R_stored[0], delta_R_stored[2], delta_R_stored[1]] ), edgecolor="black")
-plt.title("Resolution of the Cs137 peak", fontsize=22, wrap=True)           #title
+plt.bar(['BGO','LYSO', 'CsI'], np.absolute( np.array( [R_stored[1], R_stored[2], R_stored[0]] )), 
+        yerr = np.array( [delta_R_stored[1], delta_R_stored[2], delta_R_stored[0]] ), edgecolor="black")
+plt.title("Resolution of the Cs137 photopeak", fontsize=22, wrap=True)           #title
 plt.ylabel("R (%)", fontsize=14)              #ylabel
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
