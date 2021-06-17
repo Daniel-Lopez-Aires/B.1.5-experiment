@@ -420,7 +420,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,BGO_raw['\Delta(t_decay[s])'])
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the raw signals coming from the crystals", fontsize=22, wrap=True)           #title
+plt.suptitle("Rise and decay time of the signals coming from the crystals", fontsize=22, wrap=True)           #title
 plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[0], t_rise_st[2], t_rise_st[1] ])*1e6, 
         yerr = np.array([delta_t_rise_st[0], delta_t_rise_st[2], delta_t_rise_st[1] ])*1e6, 
         edgecolor="black")
@@ -439,13 +439,13 @@ plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
-plt.savefig('Rise_decay_time_raw.png', format='png')
+plt.savefig('Rise_decay_time_pre.png', format='png')
 
 
 #Print:
-print('Decay time of raw LYSO: (' + str(t_decay_st[0]*1e6) + ' +/- ' + str(delta_t_decay_st[0]*1e6) + ')us')
-print('Decay time of raw BGO: (' + str(t_decay_st[2]*1e6) + ' +/- ' + str(delta_t_decay_st[2]*1e6) + ')us')
-print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e6) + ' +/- ' + str(delta_t_decay_st[1]*1e6) + ')us' +"\n")
+print('Decay time of pre LYSO: (' + str(t_decay_st[0]*1e6) + ' +/- ' + str(delta_t_decay_st[0]*1e6) + ')us')
+print('Decay time of pre BGO: (' + str(t_decay_st[2]*1e6) + ' +/- ' + str(delta_t_decay_st[2]*1e6) + ')us')
+print('Decay time of pre CsI: (' + str(t_decay_st[1]*1e6) + ' +/- ' + str(delta_t_decay_st[1]*1e6) + ')us' +"\n")
 
 #################################################
 
@@ -453,7 +453,7 @@ print('Decay time of raw CsI: (' + str(t_decay_st[1]*1e6) + ' +/- ' + str(delta_
 
 plt.figure(figsize=(13,6))  #width, heigh 6.4*4.8 inches by default
 plt.subplot(1, 2, 1)
-plt.suptitle("Rise and decay time of the signals coming from the crystals", fontsize=22, wrap=True)    #title
+plt.suptitle("Rise and decay time of the raw signals coming from the crystals", fontsize=22, wrap=True)    #title
 plt.bar(['LYSO', 'BGO', 'CsI'], np.array([t_rise_st[3], t_rise_st[5], t_rise_st[4] ])*1e6, 
         yerr = np.array([delta_t_rise_st[3], delta_t_rise_st[5], delta_t_rise_st[4] ])*1e6, 
         edgecolor="black")
@@ -472,13 +472,13 @@ plt.ylabel("Decay time (us)", fontsize=14)              #ylabel
 # Set size of tick labels.
 plt.tick_params(axis='both', labelsize=14)              #size of axis
 plt.grid(True) 
-plt.savefig('Rise_decay_time_pre.png', format='png')
+plt.savefig('Rise_decay_time_raw.png', format='png')
 
 
 #Print:
-print('Decay time of pre LYSO: (' + str(t_decay_st[3]*1e6) + ' +/- ' + str(delta_t_decay_st[3]*1e6) + ')us')
-print('Decay time of pre BGO: (' + str(t_decay_st[5]*1e6) + ' +/- ' + str(delta_t_decay_st[5]*1e6) + ')us')
-print('Decay time of pre CsI: (' + str(t_decay_st[4]*1e6) + ' +/- ' + str(delta_t_decay_st[4]*1e6) + ')us' +"\n")
+print('Decay time of raw LYSO: (' + str(t_decay_st[3]*1e6) + ' +/- ' + str(delta_t_decay_st[3]*1e6) + ')us')
+print('Decay time of raw BGO: (' + str(t_decay_st[5]*1e6) + ' +/- ' + str(delta_t_decay_st[5]*1e6) + ')us')
+print('Decay time of raw CsI: (' + str(t_decay_st[4]*1e6) + ' +/- ' + str(delta_t_decay_st[4]*1e6) + ')us' +"\n")
 ##############################################
 
 #ratio between the decay time from the pre and from the detector
