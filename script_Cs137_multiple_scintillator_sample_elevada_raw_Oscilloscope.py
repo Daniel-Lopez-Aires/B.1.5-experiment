@@ -252,7 +252,8 @@ n_elements_peak_st = np.array([])                        #this will store the nu
                                             #for each peak, for the error calc
 delta_single_V_measurement = np.array([])         #storage of the error of the voltage 
                                                 #measurements, for the error calc
-                                                
+amplitude_st = np.array( [] )               #storage of the amplitudes                                           
+delta_amplitude_st = np.array([])           #storage of \Delta(amplitude)                                                
 integral_st = np.array([])                      #peak integral
 delta_integral_st = np.array([])                #error of the peak integral (overstimation)
 
@@ -273,7 +274,7 @@ delta_t_decay_st = np.array([])
 #%% 
 ####################################LYSO PRE ##########################3
 
-LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,3, 495, 1350, 
+LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored, 'pre', 3, 495, 1350, 
                                                  1/5 *1, 1/5 * 250e-9 )
 
 #Debug
@@ -286,12 +287,13 @@ LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_
 #Storing
 
 baseline_st = np.append(baseline_st, LYSO_pre['baseline[V]'] )  
-peak_st = np.append(peak_st, LYSO_pre['peak[V]'] )
+peak_st = np.append(peak_st, LYSO_pre['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, LYSO_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, LYSO_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, LYSO_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, LYSO_pre['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, LYSO_pre['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, LYSO_pre['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,LYSO_pre['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,LYSO_pre['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,LYSO_pre['\Delta(t_rise[s])'])
@@ -300,18 +302,19 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_pre['\Delta(t_decay[s])'])
 
 ###############################################CsI PRE   #####################
 
-CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,4, 490, 1900, 
+CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'pre',4, 490, 1900, 
                                                  1/5 *500e-3, 1/5 * 500e-9 )
 
 #Storing
 
 baseline_st = np.append(baseline_st, CsI_pre['baseline[V]'] )  
-peak_st = np.append(peak_st, CsI_pre['peak[V]'] )
+peak_st = np.append(peak_st, CsI_pre['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, CsI_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, CsI_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, CsI_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, CsI_pre['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, CsI_pre['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, CsI_pre['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,CsI_pre['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,CsI_pre['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,CsI_pre['\Delta(t_rise[s])'])
@@ -322,18 +325,19 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_pre['\Delta(t_decay[s])'])
 
 #######################################BGO PRE ##############################
 
-BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,5, 550, 1500, 
+BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'pre',5, 550, 1500, 
                                                  1/5 *200e-3, 1/5 * 500e-9 )
 
 #Storing
 
 baseline_st = np.append(baseline_st, BGO_pre['baseline[V]'] )  
-peak_st = np.append(peak_st, BGO_pre['peak[V]'] )
+peak_st = np.append(peak_st, BGO_pre['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, BGO_pre['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, BGO_pre['\Delta(V[V])'] )
 integral_st = np.append(integral_st, BGO_pre['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, BGO_pre['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, BGO_pre['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, BGO_pre['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,BGO_pre['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,BGO_pre['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,BGO_pre['\Delta(t_rise[s])'])
@@ -347,18 +351,19 @@ delta_t_decay_st = np.append(delta_t_decay_st,BGO_pre['\Delta(t_decay[s])'])
 
 ####################################LYSO RAW  ##########################3
 
-LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,0, 480, 1350, 
+LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',0, 480, 1350, 
                                                  1/5 *50e-3, 1/5 * 250e-9 )
 
 #Storing
 
 baseline_st = np.append(baseline_st, LYSO_raw['baseline[V]'] )  
-peak_st = np.append(peak_st, LYSO_raw['peak[V]'] )
+peak_st = np.append(peak_st, LYSO_raw['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, LYSO_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, LYSO_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, LYSO_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, LYSO_raw['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, LYSO_raw['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, LYSO_raw['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,LYSO_raw['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,LYSO_raw['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,LYSO_raw['\Delta(t_rise[s])'])
@@ -368,18 +373,19 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_raw['\Delta(t_decay[s])'])
 
 ####################################CsI RAW ##########################3
 
-CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,1, 480, 2100, 
+CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',1, 480, 2100, 
                                                  1/5 *20e-3, 1/5 * 1e-6 )
 
 #Storing
 
 baseline_st = np.append(baseline_st, CsI_raw['baseline[V]'] )  
-peak_st = np.append(peak_st, CsI_raw['peak[V]'] )
+peak_st = np.append(peak_st, CsI_raw['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, CsI_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, CsI_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, CsI_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, CsI_raw['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, CsI_raw['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, CsI_raw['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,CsI_raw['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,CsI_raw['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,CsI_raw['\Delta(t_rise[s])'])
@@ -389,18 +395,19 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_raw['\Delta(t_decay[s])'])
 
 ####################################BGO RAW##########################3
 
-BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,2, 540, 1500, 
+BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',2, 540, 1500, 
                                                  1/5 *10e-3, 1/5 * 500e-9 )
 
 #Storing
 
 baseline_st = np.append(baseline_st, BGO_raw['baseline[V]'] )  
-peak_st = np.append(peak_st, BGO_raw['peak[V]'] )
+peak_st = np.append(peak_st, BGO_raw['|peak|[V]'] )
 n_elements_peak_st = np.append(n_elements_peak_st, BGO_raw['N_peak'] )
 delta_single_V_measurement = np.append(delta_single_V_measurement, BGO_raw['\Delta(V[V])'] )
 integral_st = np.append(integral_st, BGO_raw['integral[V*s]'] )
 delta_integral_st = np.append(delta_integral_st, BGO_raw['\Delta(integral[V*s])'] )
-
+amplitude_st = np.append(amplitude_st, CsI_raw['amplitude[V]'])
+delta_amplitude_st = np.append(delta_amplitude_st, CsI_raw['\Delta(amplitude[V])'] )
 t_rise_st = np.append(t_rise_st,BGO_raw['t_rise[s]'])
 t_decay_st = np.append(t_decay_st,BGO_raw['t_decay[s]'])
 delta_t_rise_st = np.append(delta_t_rise_st,BGO_raw['\Delta(t_rise[s])'])
@@ -481,7 +488,13 @@ print('Decay time of raw BGO: (' + str(t_decay_st[5]*1e6) + ' +/- ' + str(delta_
 print('Decay time of raw CsI: (' + str(t_decay_st[4]*1e6) + ' +/- ' + str(delta_t_decay_st[4]*1e6) + ')us' +"\n")
 ##############################################
 
+
+
+####################################################################
+##################DEcay time ratios#############################
+##################################################################
 #ratio between the decay time from the pre and from the detector
+
 ratio_t_decay_pre_raw = t_decay_st[3:6]/t_decay_st[0:3] #correct indexes, yes
 print('Ratio t_decay pre/raw: (LYSO, CsI, BGO) ' + str(ratio_t_decay_pre_raw) + '\n')
 
@@ -522,50 +535,30 @@ print('Decay time ratio of pre LYSO/BGO: (' + str(ratio_decay[4]) + ' +/- ' + st
 
 
 
-#############################AMPLITUDES#####################################
-
-
-#The amplitude of the signal wil be the difference between the baseline and the
-#peak. For the pre signals, the peak is negative, so adding it to the baseline will give the
-#difference. For the raw signals, the peak is positive, so will have to substract the baseline.
-#I can do both this with 2 loops, one for the pre signals and another for the raw signals.
-
-max_voltage_signals = np.array( [] )            #[V], storing of the amplitude
-
-for i in range(0,3):        #PRE
-    max_voltage_signals = np.append(max_voltage_signals, baseline_st[i] + peak_st[i] )
-
-for i in range(3,6):        #RAW
-    max_voltage_signals = np.append(max_voltage_signals, -baseline_st[i] + peak_st[i] )
-    
-    
-
-delta_max_voltage = delta_single_V_measurement * np.sqrt(2)           
-            #[V] error of the amplitude = peak-baseline
-
-delta_voltage_peak_st = np.sqrt(n_elements_peak_st) * delta_single_V_measurement 
-                            #[V] error of the total voltage of the peak (integration), all voltages
-                            #have the same error
+############################################################
+##################Amplitudes ratios#############################
+##################################################################
+#ratio between the amplitudes from the pre and from the detector
 
 
 #Amplitudes (voltage integration)
-print('Amplitude (Vmax) LYSO (V) = ' + str(max_voltage_signals[0]) + ' +- ' + str(delta_max_voltage[0]))
-print('Amplitude (Vmax) BGO (V) = ' + str(max_voltage_signals[2]) + ' +- ' + str(delta_max_voltage[2]))
-print('Amplitude (Vmax) CsI (V) =' + str(max_voltage_signals[1]) + ' +- ' + str(delta_max_voltage[1]) +'\n')
+print('Amplitude (Vmax) LYSO (V) = ' + str(amplitude_st[0]) + ' +- ' + str(delta_amplitude_st[0]))
+print('Amplitude (Vmax) BGO (V) = ' + str(amplitude_st[2]) + ' +- ' + str(delta_amplitude_st[2]))
+print('Amplitude (Vmax) CsI (V) =' + str(amplitude_st[1]) + ' +- ' + str(delta_amplitude_st[1]) +'\n')
 
-print('Amplitude (Vmax) raw LYSO (V) = ' + str(max_voltage_signals[3]) + ' +- ' + str(delta_max_voltage[3]))
-print('Amplitude (Vmax) raw BGO (V) = ' + str(max_voltage_signals[5]) + ' +- ' + str(delta_max_voltage[5]))
-print('Amplitude (Vmax) raw CsI (V) =' + str(max_voltage_signals[4]) + ' +- ' + str(delta_max_voltage[4]) +'\n')
+print('Amplitude (Vmax) raw LYSO (V) = ' + str(amplitude_st[3]) + ' +- ' + str(delta_amplitude_st[3]))
+print('Amplitude (Vmax) raw BGO (V) = ' + str(amplitude_st[5]) + ' +- ' + str(delta_amplitude_st[5]))
+print('Amplitude (Vmax) raw CsI (V) =' + str(amplitude_st[4]) + ' +- ' + str(delta_amplitude_st[4]) +'\n')
 
 
 #Amplitudes ratios, pre/raw
     #order: LYSO,CsI, BGO, 0,1,2 pre, 3,4,5 raw
 
-ratio_ampl_pre_raw = max_voltage_signals[0:3]/max_voltage_signals[3:6]  #yup, correct indexes
+ratio_ampl_pre_raw = amplitude_st[0:3]/amplitude_st[3:6]  #yup, correct indexes
 delta_ratio_ampl_pre_raw = ratio_ampl_pre_raw * np.sqrt( 
-    np.array( [ (delta_max_voltage[0]/max_voltage_signals[0])**2 + (delta_max_voltage[3]/max_voltage_signals[3])**2, 
-    (delta_max_voltage[1]/max_voltage_signals[1])**2 + (delta_max_voltage[4]/max_voltage_signals[4])**2, 
-    (delta_max_voltage[2]/max_voltage_signals[2])**2 + (delta_max_voltage[5]/max_voltage_signals[5])**2   
+    np.array( [ (delta_amplitude_st[0]/amplitude_st[0])**2 + (delta_amplitude_st[3]/amplitude_st[3])**2, 
+    (delta_amplitude_st[1]/amplitude_st[1])**2 + (delta_amplitude_st[4]/amplitude_st[4])**2, 
+    (delta_amplitude_st[2]/amplitude_st[2])**2 + (delta_amplitude_st[5]/amplitude_st[5])**2   
     ] ) )                               #delta of the amplitudes, following the order defined in the variable
 
 #print('Ratio amplitude pre/raw: (LYSO, CsI, BGO) ' + str(ratio_ampl_pre_raw) + '\n')
@@ -584,16 +577,16 @@ print('Integral CsI (baseline removed) (V*s) =' + str(integral_st[1]) + ' +- ' +
 #And the ratio of the maximum voltage:
     #BGO/ CsI & LYSO/CsI & LYSO/BGO
 
-ratio_voltage_max = np.array([max_voltage_signals[2] / max_voltage_signals[1], 
-                      max_voltage_signals[0] / max_voltage_signals[1],
-                      max_voltage_signals[0] / max_voltage_signals[2]
+ratio_voltage_max = np.array([amplitude_st[2] / amplitude_st[1], 
+                      amplitude_st[0] / amplitude_st[1],
+                      amplitude_st[0] / amplitude_st[2]
                       ])                #ratio of amplitudes, order BGO/CsI, LYSO/CsI, LYSO/BGO
 
 
 delta_ratio_voltage_max= ratio_voltage_max * np.sqrt( np.array(
-    [(delta_max_voltage[2]/max_voltage_signals[2])**2 + (delta_max_voltage[1]/max_voltage_signals[1])**2,
-      (delta_max_voltage[0]/max_voltage_signals[0])**2 + (delta_max_voltage[1]/max_voltage_signals[1])**2,
-      (delta_max_voltage[0]/max_voltage_signals[0])**2 + (delta_max_voltage[2]/max_voltage_signals[2])**2,
+    [(delta_amplitude_st[2]/amplitude_st[2])**2 + (delta_amplitude_st[1]/amplitude_st[1])**2,
+      (delta_amplitude_st[0]/amplitude_st[0])**2 + (delta_amplitude_st[1]/amplitude_st[1])**2,
+      (delta_amplitude_st[0]/amplitude_st[0])**2 + (delta_amplitude_st[2]/amplitude_st[2])**2,
               ]
     )
     )   #computing the error. The sqrt of the quotient have to be computed by hand :))
