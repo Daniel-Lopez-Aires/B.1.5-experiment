@@ -9,6 +9,12 @@ This script contains the calcs of the B.1.5. experiment using the signals from t
 The wrong way to compute the light yield ratio is also included, commented.
 
 The sample is elevated, 1 cylinder only (plus the little ring placed just above the scintillator (see pictures in logbook))
+
+
+*****TO DO******
+
+*Create loop for storing al the variables of the peak analysis to shorten the code
+
 """
 
 #######General packages useful##
@@ -274,7 +280,7 @@ delta_t_decay_st = np.array([])
 #%% 
 ####################################LYSO PRE ##########################3
 
-LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored, 'pre', 3, 495, 1350, 
+LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,3],time_stored[:,3], 'pre', 495, 1350, 
                                                  1/5 *1, 1/5 * 250e-9 )
 
 #Debug
@@ -302,7 +308,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_pre['\Delta(t_decay[s])'])
 
 ###############################################CsI PRE   #####################
 
-CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'pre',4, 490, 1900, 
+CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,4],time_stored[:,4],'pre', 490, 1900, 
                                                  1/5 *500e-3, 1/5 * 500e-9 )
 
 #Storing
@@ -325,7 +331,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_pre['\Delta(t_decay[s])'])
 
 #######################################BGO PRE ##############################
 
-BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'pre',5, 550, 1500, 
+BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,5],time_stored[:,5],'pre', 550, 1500, 
                                                  1/5 *200e-3, 1/5 * 500e-9 )
 
 #Storing
@@ -351,7 +357,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,BGO_pre['\Delta(t_decay[s])'])
 
 ####################################LYSO RAW  ##########################3
 
-LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',0, 480, 1350, 
+LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,0],time_stored[:,0],'raw', 480, 1350, 
                                                  1/5 *50e-3, 1/5 * 250e-9 )
 
 #Storing
@@ -373,7 +379,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_raw['\Delta(t_decay[s])'])
 
 ####################################CsI RAW ##########################3
 
-CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',1, 480, 2100, 
+CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,1],time_stored[:,1],'raw', 480, 2100, 
                                                  1/5 *20e-3, 1/5 * 1e-6 )
 
 #Storing
@@ -395,7 +401,7 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_raw['\Delta(t_decay[s])'])
 
 ####################################BGO RAW##########################3
 
-BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored,time_stored,'raw',2, 540, 1500, 
+BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,2],time_stored[:,2],'raw', 540, 1500, 
                                                  1/5 *10e-3, 1/5 * 500e-9 )
 
 #Storing
