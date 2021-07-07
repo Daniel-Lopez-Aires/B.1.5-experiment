@@ -21,16 +21,13 @@ The sample is elevated, 1 cylinder only (plus the little ring placed just above 
 
 import matplotlib.pyplot as plt  #for simplicity, to not write matplotlib.pyplot
         #everytime we want to plot something
-
-import math 
 #from scipy.stats import norm               ##norm.fit() fit to gaussian
 import numpy as np
     #np contain linspaces as np.linspace(a,b,N)
-import csv
+import pandas as pd
         
-from plotly.graph_objs import Bar, Layout
-from plotly import offline
-from scipy import stats as stats     #to find the most commom element in a list
+#from plotly.graph_objs import Bar, Layout
+#from plotly import offline
 
 import sys                   #to import functions from other folders!!
 sys.path.insert(0, '/home/dla/Python/Functions_homemade')   #path where I have the functions
@@ -60,52 +57,61 @@ time_stored = np.array([])
 
 
 ########LYSO RAW########
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0002.CSV')    
+LYSO_r = pd.read_csv('TEK0002.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])
+                #, as sepparator, no header. I rename the columns, with letters
+                #the unimportant ones
+
 
 #Storing of the values
-voltage_stored = np.append(voltage_stored,load[1])
-time_stored = np.append(time_stored,load[0])     
+voltage_stored = np.append(voltage_stored,LYSO_r['V[V]'])
+time_stored = np.append(time_stored, LYSO_r['t[s]'])    
 
   
 #########CsI RAW##########
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0004.CSV')    
+CsI_r = pd.read_csv('TEK0004.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])   
 
 #Storing of the values
-voltage_stored = np.column_stack((voltage_stored,load[1]))
-time_stored = np.column_stack((time_stored,load[0]))
+voltage_stored = np.column_stack((voltage_stored, CsI_r['V[V]']))
+time_stored = np.column_stack((time_stored, CsI_r['t[s]']))
         #have to write column stack so it creates columns!
         # voltage_stored = np.column_stack((voltage_stored, voltage_help)) 
 
 
 ############BGO RAW#################
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0000.CSV')    
+BGO_r = pd.read_csv('TEK0000.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])   
 
 #Storing of the values
-voltage_stored = np.column_stack((voltage_stored,load[1]))
-time_stored = np.column_stack((time_stored,load[0]))       
+voltage_stored = np.column_stack((voltage_stored, BGO_r['V[V]']))
+time_stored = np.column_stack((time_stored, BGO_r['t[s]']))
 
 
 #############LYSO PRE####################
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0003.CSV')    
+LYSO_p = pd.read_csv('TEK0003.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])   
 
 #Storing of the values
-voltage_stored = np.column_stack((voltage_stored,load[1]))
-time_stored = np.column_stack((time_stored,load[0]))      
+voltage_stored = np.column_stack((voltage_stored, LYSO_p['V[V]']))
+time_stored = np.column_stack((time_stored, LYSO_p['t[s]']))
    
    
 #########CsI PRE####################3
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0005.CSV')    
+CsI_p = pd.read_csv('TEK0005.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])   
 
 #Storing of the values
-voltage_stored = np.column_stack((voltage_stored,load[1]))
-time_stored = np.column_stack((time_stored,load[0]))
+voltage_stored = np.column_stack((voltage_stored, CsI_p['V[V]']))
+time_stored = np.column_stack((time_stored, CsI_p['t[s]']))
 
 ##########BGO PRE##################
-load = Read_csv_oscilloscope.Read_csv_oscilloscope('TEK0001.CSV')    
+BGO_p = pd.read_csv('TEK0001.CSV', sep=',', header = None, 
+                   names = ['a', 'b', 'c','t[s]' , 'V[V]' , 'e'])   
 
 #Storing of the values
-voltage_stored = np.column_stack((voltage_stored,load[1]))
-time_stored = np.column_stack((time_stored,load[0]))       
+voltage_stored = np.column_stack((voltage_stored, BGO_p['V[V]']))
+time_stored = np.column_stack((time_stored, BGO_p['t[s]']))     
 
 
         
@@ -280,9 +286,9 @@ delta_t_decay_st = np.array([])
 #%% 
 ####################################LYSO PRE ##########################3
 
-LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,3],time_stored[:,3], 'pre', 495, 1350, 
-                                                 1/5 *1, 1/5 * 250e-9 )
-
+LYSO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(LYSO_p['V[V]'],LYSO_p['t[s]'],
+                                                'pre', 495, 1350, 
+                                                 1/5 *1, 1/5 * 250e-9 ) 
 #Debug
 #t_decayy = time_stored[1140,3]*1e6 - time_stored[703,3] *1e6 
 #     			#time when the peak ends - time when the max value is reached
@@ -308,7 +314,8 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_pre['\Delta(t_decay[s])'])
 
 ###############################################CsI PRE   #####################
 
-CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,4],time_stored[:,4],'pre', 490, 1900, 
+CsI_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(CsI_p['V[V]'],CsI_p['t[s]'],
+                                                'pre', 490, 1900, 
                                                  1/5 *500e-3, 1/5 * 500e-9 )
 
 #Storing
@@ -331,7 +338,8 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_pre['\Delta(t_decay[s])'])
 
 #######################################BGO PRE ##############################
 
-BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,5],time_stored[:,5],'pre', 550, 1500, 
+BGO_pre = Peak_analysis_oscilloscope.Peak_analysis_oscillo(BGO_p['V[V]'],BGO_p['t[s]'],
+                                                'pre', 550, 1500, 
                                                  1/5 *200e-3, 1/5 * 500e-9 )
 
 #Storing
@@ -357,7 +365,8 @@ delta_t_decay_st = np.append(delta_t_decay_st,BGO_pre['\Delta(t_decay[s])'])
 
 ####################################LYSO RAW  ##########################3
 
-LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,0],time_stored[:,0],'raw', 480, 1350, 
+LYSO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(LYSO_r['V[V]'],LYSO_r['t[s]'],
+                                                'raw', 480, 1350, 
                                                  1/5 *50e-3, 1/5 * 250e-9 )
 
 #Storing
@@ -379,7 +388,8 @@ delta_t_decay_st = np.append(delta_t_decay_st,LYSO_raw['\Delta(t_decay[s])'])
 
 ####################################CsI RAW ##########################3
 
-CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,1],time_stored[:,1],'raw', 480, 2100, 
+CsI_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(CsI_r['V[V]'],CsI_r['t[s]'],
+                                                'raw', 480, 2100, 
                                                  1/5 *20e-3, 1/5 * 1e-6 )
 
 #Storing
@@ -401,7 +411,8 @@ delta_t_decay_st = np.append(delta_t_decay_st,CsI_raw['\Delta(t_decay[s])'])
 
 ####################################BGO RAW##########################3
 
-BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(voltage_stored[:,2],time_stored[:,2],'raw', 540, 1500, 
+BGO_raw = Peak_analysis_oscilloscope.Peak_analysis_oscillo(BGO_r['V[V]'],BGO_r['t[s]'],
+                                                'raw', 540, 1500, 
                                                  1/5 *10e-3, 1/5 * 500e-9 )
 
 #Storing
