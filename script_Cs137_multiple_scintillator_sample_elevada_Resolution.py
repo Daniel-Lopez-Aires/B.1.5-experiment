@@ -25,15 +25,15 @@ import matplotlib.pyplot as plt  #for simplicity, to not write matplotlib.pyplot
 import numpy as np
     #np contain linspaces as np.linspace(a,b,N)
         
-from plotly.graph_objs import Bar, Layout
-from plotly import offline
+#from plotly.graph_objs import Bar, Layout
+#from plotly import offline
 
 import sys                   #to import functions from other folders!!
 sys.path.insert(0, '/home/dla/Python/Functions_homemade')   #path where I have the functions
 
 
 import Read_hist_txt
-import Gaussian_fit
+import Fits
 ######3
 
 
@@ -215,7 +215,7 @@ plt.grid(True)
 plt.savefig('Signal_CsI_sum.png', format='png')
 ###
 
-fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
+fit = Fits.Gaussian_fit(ch_peak,counts_peak)
 
 
 #Storing of the relevant data, sigma and its error
@@ -293,7 +293,7 @@ plt.savefig('Signal_BGO_sum.png', format='png')
 ###
 
 
-fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
+fit = Fits.Gaussian_fit(ch_peak,counts_peak)
 
 
 sigma_stored = np.append(sigma_stored, fit['sigma'])
@@ -355,7 +355,7 @@ plt.grid(True)
 plt.savefig('Signal_LYSO_sum.png', format='png')
 ###
 
-fit = Gaussian_fit.Gaussian_fit(ch_peak,counts_peak)
+fit = Fits.Gaussian_fit(ch_peak,counts_peak)
 
 sigma_stored = np.append(sigma_stored, fit['sigma'])
 mean_stored = np.append(mean_stored, fit['mean'])
